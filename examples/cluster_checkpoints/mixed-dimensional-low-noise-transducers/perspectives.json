@@ -1,0 +1,19 @@
+{
+  "topic": "Which 2D-0D/2D-1D/2D-3D vdW stacks (e.g., MoS\u2082\u2013QD, CNT\u2013graphene) best combine strong capture/absorption with high-mobility transport to push FET/photodetector responsivity and baseline stability in real media?",
+  "perspectives": [
+    {
+      "id": "2cb202ef51c67dd7",
+      "perspective": "Band\u2011Alignment & Interface Engineering of 2D\u20110D/2D\u20111D Heterostructures"
+    },
+    {
+      "id": "a43043e85842459c",
+      "perspective": "Vertical vs. Lateral Device Architectures for Maximizing Mobility and Responsivity"
+    },
+    {
+      "id": "aebbd345f75b5a3c",
+      "perspective": "Stability in Real\u2011World Media: Surface Functionalization and Encapsulation Strategies"
+    }
+  ],
+  "timestamp": "2025-11-07T13:17:10.281917",
+  "thread_id": "research_8c96f0"
+}

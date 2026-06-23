@@ -1,0 +1,19 @@
+{
+  "topic": "What photothermal materials and system designs are most effective for solar-driven water evaporation in complex wastewater matrices\u2014such as high-organic-load or multi-ion streams\u2014and how do they compare in terms of material composition, solar-to-vapor conversion efficiency under one-sun illumination, evaporation rate, fouling resistance, and integrated resource-recovery functionalities?",
+  "perspectives": [
+    {
+      "id": "ec439e27bd72f0e1",
+      "perspective": "Hybrid Nanocomposite Photothermal Interfaces with Antifouling Coatings"
+    },
+    {
+      "id": "ff3b560810fed1fb",
+      "perspective": "3D Porous Metal\u2011Organic Framework (MOF)\u2011Based Evaporation Platforms for Multi\u2011Ion Selectivity"
+    },
+    {
+      "id": "b4fbb20874267a8d",
+      "perspective": "Solar\u2011Driven Interfacial Evaporation Using Floating Biomass\u2011Derived Carbon Aerogels with Integrated Electrochemical Recovery"
+    }
+  ],
+  "timestamp": "2025-11-07T13:19:34.234836",
+  "thread_id": "research_6dfd5b"
+}

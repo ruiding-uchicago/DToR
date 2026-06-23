@@ -1,0 +1,8 @@
+# Regenerated artifacts — rebuild with the scripts; do not commit.
+# The corpus ships as corpus.tar.gz; 01_sanitize.py extracts it to corpus/.
+vectorstore/
+corpus/
+**/paragraphs_whole_sanitized.txt
+*.log
+__pycache__/
+*.pyc

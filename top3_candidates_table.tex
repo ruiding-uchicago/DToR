@@ -1,0 +1,75 @@
+% =====================================================================
+%  Per-topic best in-house agent + top-3 recommended candidates
+%  27 in-distribution topics (5 OOD held-out topics excluded:
+%   Climate_ML_Convection_Parameterization, Genomic_Foundation_Models,
+%   Quantum_Error_Correction_Architectures, RCT_Emulation_Causal_Inference,
+%   Synthetic_Cortical_Organoids)
+%
+%  Rows grouped by winning in-house gpt-oss-120B variant.
+%  "Mean rubric" = mean over 5 LLM judges x 5 dimensions x 3 trials (0-10).
+%  All 27 rank-1 agents are in-house gpt-oss-120B family (0/27 commercial).
+%  Top-1/2/3 = each report's own top recommended candidates (short phrase).
+%
+%  Required packages: booktabs, rotating, array
+%  Compile with pdflatex (no Unicode needed; formulas use math mode).
+% =====================================================================
+\begin{sidewaystable}[p]
+  \centering
+  \scriptsize
+  \renewcommand{\arraystretch}{1.25}
+  \setlength{\tabcolsep}{4pt}
+  \caption{Per-topic best in-house agent (by LLM rubric mean, 0--10) and the
+    top-3 recommended candidates from each winning report, across the 27
+    in-distribution topics. Every rank-1 agent belongs to the in-house
+    gpt-oss-120B family; no commercial deep-research agent ranked first on any
+    topic.}
+  \label{tab:top3-candidates}
+  \begin{tabular}{>{\raggedright\arraybackslash}p{2.4cm}
+                  >{\raggedright\arraybackslash}p{2.1cm}
+                  c
+                  >{\raggedright\arraybackslash}p{3.9cm}
+                  >{\raggedright\arraybackslash}p{3.9cm}
+                  >{\raggedright\arraybackslash}p{3.9cm}}
+    \toprule
+    \textbf{Topic} & \textbf{Best agent} & \textbf{Mean} &
+    \textbf{Top-1 candidate} & \textbf{Top-2 candidate} & \textbf{Top-3 candidate} \\
+    \midrule
+    % ---- DToR_gpt120B_local500 (12) ----
+    Antibiotics Sensing 2D Probes & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.840 & Thiolated DNA aptamer on graphene FET & c-MIP on WS$_2$/CNT extended-gate FET & DARPin on WS$_2$ FET \\
+    CO2RR SOTA and Emerging Cats & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.760 & MOF-derived Cu@C & Cu-Ni atomic-pair (ALD) & MXene-supported Cu-Zn dual-atom \\
+    Diamane Bandgap Functionalization & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.800 & Partial F/N covalent termination & Sub-monolayer Ti/Zr/Hf adsorption & Au/Pt sub-monolayer contact patches \\
+    InSitu Liquid TEM MoS2 Sensing & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 9.053 & h-BN + graphene dual-cap liquid cell & Low-dose dose-fractionated 80~kV imaging & Trigger-based correlative electrical/EELS readout \\
+    LIB Advanced Binders & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.507 & PVA/borax aqueous dynamic-covalent network & CMC + waterborne polyurethane aqueous hybrid & Lithiated cellulose nanofiber / polyether oligomer binder \\
+    Li over Na Selectivity Membranes & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.507 & Al$^{3+}$-doped h-BN/graphene heterostructure & Peptide-functionalized $\beta$-ketoenamine COF & Mixed-metal Ti/Zr COF \\
+    ML e-Tongue for Water & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.840 & MXene-FeWO$_4$ interdigitated electrode array & WS$_2$/LDH or Ni/WS$_2$/WC heterostructure sensors & Au-NP@h-BN/BNC SERS zones \\
+    Microplastics Sensing 2D & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.640 & Few-layer graphene + GQD peptide EIS & Ti$_3$C$_2$T$_x$ MXene aptamer DEP-FET & MoS$_2$ monolayer photonic-crystal MIP \\
+    OER Wastewater Resistant Cats & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.813 & NiFe-OOH on NiCo$_2$O$_4$, spinel/ALD-sealed & Fe-Ni MOF-derived OOH/N-carbon, ALD shell & Fe single-atom on Nb-doped TiO$_2$ \\
+    PFAS 2D FET Probes & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.413 & PFAS-imprinted beta-ketoenamine COF monolayer & Graphene/MoS$_2$ heterostructure + nano-MIP/aptamer & Fluorosilane-passivated MXene-AgNP composite \\
+    PFAS Electro Degradation & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.627 & (N,S,B)-doped porous carbon & Ti$_4$O$_7$-Mn$_3$O$_4$ Magneli/spinel monolith & Ti$_3$C$_2$-T$_x$/g-C$_3$N$_4$ hybrid laminate \\
+    Wastewater Resource Recovery Cats & DToR\_\allowbreak gpt120B\_\allowbreak local500 & 8.413 & Al-doped Ti$_3$C$_2$T$_x$ MXene & N-doped 1T-MoS$_2$ (PEI-functionalized) & Fe-N$_4$ single-atom on N-graphene \\
+    \midrule
+    % ---- DToR_gpt120B_local100 (8) ----
+    Ambient Pressure Diamond Growth & DToR\_\allowbreak gpt120B\_\allowbreak local100 & 8.787 & Ga--Ni--Fe--Si liquid-metal alloy (10\% Ni, 10\% Fe, 1--5\% Si) & Si-terminated 4H-SiC (111) substrate & Ir-buffered SiC substrate \\
+    Batteryless Stretchable Biosensors & DToR\_\allowbreak gpt120B\_\allowbreak local100 & 8.760 & Dual-mode CNT/graphene TENG/PENG ($\beta$-PVDF) & Ionic-liquid-functionalised graphene networks (IL-GN) & Fe-MnO$_2$//F-Fe$_2$O$_3$ asymmetric supercapacitor \\
+    Electro Photo Gated Smart Membranes & DToR\_\allowbreak gpt120B\_\allowbreak local100 & 8.787 & Azobenzene-polymer-gated MXene/COF nanochannels & STPP-capped MXene-COF membrane & Charge-inversion/piezo-phototronic gated nanochannels \\
+    LIB Fluoroether Anion Receptor & DToR\_\allowbreak gpt120B\_\allowbreak local100 & 8.707 & PFPE-B oligomer (boron-functionalised) & Per-F-diglyme-B(C$_6$F$_5$)$_3$ & B-aryl-functionalised FDME \\
+    LiCoNi Selective Membranes & DToR\_\allowbreak gpt120B\_\allowbreak local100 & 8.613 & UiO-66-SO$_3$H mixed-matrix membrane & GO-spacer + PEO-g-12-crown-4 lamellar membrane & sGO/PANI + PEDOT:PSS electrically-gated hybrid \\
+    Nutrient Sensors Anti-Interference & DToR\_\allowbreak gpt120B\_\allowbreak local100 & 8.747 & Zr-MOF-printed ion-selective membrane (UiO-66-NH$_2$) & Integrated sample-conditioning train & Edge-ready CNN ML calibration \\
+    Printed FET Array Process Window & DToR\_\allowbreak gpt120B\_\allowbreak local100 & 8.920 & $\eta\cdot U$-controlled deposition window (MPC) & Surface-energy-matched substrate ($\Delta\gamma_s < 2$~mJ\,m$^{-2}$) & Multi-step gentle anneal profile \\
+    S aureus FET Commercial Probes & DToR\_\allowbreak gpt120B\_\allowbreak local100 & 8.720 & Peptide-mimetic MIP (extended-gate FET) & QD-DNA (LNA) amplified probe & Polymer-aptamer nanofiber probe \\
+    \midrule
+    % ---- DToR_gpt120B_local0 (1) ----
+    NextGen Solar Unconventional & DToR\_\allowbreak gpt120B\_\allowbreak local0 & 8.347 & Ferroelectric BPVE chalcogenide perovskites (SbSI) & Strained 2D ferroelectric SnSe & KBNNO ferroelectric thin film \\
+    \midrule
+    % ---- Single_gpt120B_local100 (4) ----
+    2D Synaptic Transistors Practical & Single\_\allowbreak gpt120B\_\allowbreak local100 & 8.693 & ALD-MoS$_2$ lateral memristor (dual-gate EDL) & Solution-grown Tellurene EDL FET & WSe$_2$/h-BN dual-gate charge-trap heterostructure \\
+    Catalytic Mineralization of Microplastics & Single\_\allowbreak gpt120B\_\allowbreak local100 & 8.760 & Re-Ru-Bpy$_{0.3}$-NT organosilica nanotube & TiO$_2$-coated ZnO tetrapods & N-doped porous carbon-Pt electrocatalyst \\
+    Solar Evap Wastewater Photothermal & Single\_\allowbreak gpt120B\_\allowbreak local100 & 8.333 & Carbon-MXene gradient aerogel & Self-floating 3-D cavity evaporator (polydopamine-graphene) & $\beta$-FeOOH/TA/APTES photo-Fenton membrane \\
+    Transient Biodegradable Sensor Nodes & Single\_\allowbreak gpt120B\_\allowbreak local100 & 8.680 & Zn/Mg micro-flake interconnects + silk-PLGA substrate & Passive backscatter RFID (13.56~MHz/UHF) & NFC-in-PLGA capsule \\
+    \midrule
+    % ---- Single_gpt120B_local500 (2) ----
+    CO2 Sensing 2D Materials & Single\_\allowbreak gpt120B\_\allowbreak local500 & 8.733 & MXene/UiO-66-NH$_2$ 2D-MOF hybrid & 3D graphene/g-C$_3$N$_4$ heterostructure & Janus MXene (Ti$_2$CT$_x$) + PEI \\
+    Mixed Dimensional Low Noise Transducers & Single\_\allowbreak gpt120B\_\allowbreak local500 & 8.480 & CsPbBr$_3$ QD + MoSe$_2$ (h-BN capped) & Metallic CNT + MoS$_2$ (graphene contact) & MoS$_2$/WS$_2$ vertical stack + h-BN \\
+    \bottomrule
+  \end{tabular}
+\end{sidewaystable}

@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 0.22584835583333332,
+  "reports_generated": [
+    "synthesis_branches_and_final/co2-sensing-2d-materials/branch_48ca4e89407db12e/research_topics_CO2_Sensing_2D_Materials.txt/final_report_20251108_011222.md"
+  ],
+  "can_resume": false
+}

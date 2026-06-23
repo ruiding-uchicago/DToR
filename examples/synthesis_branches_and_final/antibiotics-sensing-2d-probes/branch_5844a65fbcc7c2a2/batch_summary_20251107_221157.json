@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 1.6497222222222223e-06,
+  "reports_generated": [
+    "synthesis_branches_and_final/antibiotics-sensing-2d-probes/branch_5844a65fbcc7c2a2/research_topics_Antibiotics_Sensing_2D_Probes.txt/final_report_20251107_220928.md"
+  ],
+  "can_resume": false
+}

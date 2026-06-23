@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  dtor-cli:
+    build:
+      context: .
+      dockerfile: Dockerfile-cli
+    image: dtor-cli:latest
+    volumes:
+      # Mount output directory to save reports
+      - ./output:/app/output
+      # Optional: mount research topics if you have them
+      - ./research_topics:/app/research_topics:ro
+    environment:
+      - USE_LOCAL_RAG=${USE_LOCAL_RAG:-false}
+      - LOCAL_LLM_TIMEOUT_SECONDS=${LOCAL_LLM_TIMEOUT_SECONDS:-300}
+      # Add other environment variables as needed
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+    # If you need to connect to Ollama running on the host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Override entrypoint to run your command
+    # Example: docker-compose run dtor-cli -m single -t "your topic" -o /app/output

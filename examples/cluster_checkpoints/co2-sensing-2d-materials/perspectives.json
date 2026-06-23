@@ -1,0 +1,19 @@
+{
+  "topic": "Which two-dimensional materials\u2014such as graphene derivatives, transition metal dichalcogenides, or MXenes\u2014offer the highest CO\u2082 sensing performance in complex gas or aqueous environments, and how do they compare in terms of detection limit (ppm), selectivity against common interferents (e.g., O\u2082, H\u2082O), response/recovery time, and long-term stability, including any functionalization or structural modifications that enhance these metrics? Think of novel candidates.",
+  "perspectives": [
+    {
+      "id": "48ca4e89407db12e",
+      "perspective": "Defect\u2011Engineered MXenes with Surface Termination Tuning"
+    },
+    {
+      "id": "7590c9059e38364b",
+      "perspective": "Heterostructured Graphene/Transition\u2011Metal Dichalcogenide (TMD) Hybrids with Molecular Imprinting"
+    },
+    {
+      "id": "ab37a715af8efac3",
+      "perspective": "2D Covalent Organic Framework (COF) Nanosheets Functionalized with Amine\u2011Rich Linkers"
+    }
+  ],
+  "timestamp": "2025-11-07T13:15:52.787607",
+  "thread_id": "research_69c91b"
+}

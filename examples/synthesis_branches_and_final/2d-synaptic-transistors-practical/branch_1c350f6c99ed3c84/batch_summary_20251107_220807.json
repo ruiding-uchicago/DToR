@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 2.1541666666666667e-06,
+  "reports_generated": [
+    "synthesis_branches_and_final/2d-synaptic-transistors-practical/branch_1c350f6c99ed3c84/research_topics_2D_Synaptic_Transistors_Practical.txt/final_report_20251107_214649.md"
+  ],
+  "can_resume": false
+}

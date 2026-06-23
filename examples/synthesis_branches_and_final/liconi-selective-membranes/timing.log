@@ -1,0 +1,38 @@
+[2025-11-07 13:14:09] ToT run started for research_topics/LiCoNi_Selective_Membranes.txt
+[2025-11-07 13:14:09] Stage 1 submitted (Job ID: 1357655)
+[2025-11-07 16:22:23] Stage 1 completed
+[2025-11-07 16:22:23] Stage 2 Branch 85f41ea2f48e7b9f job 1/3 submitted (Job ID: 1358114)
+[2025-11-07 16:22:23] Stage 2 Branch 85f41ea2f48e7b9f job 2/3 submitted (Job ID: 1358115, dependency: 1358114)
+[2025-11-07 16:22:23] Stage 2 Branch 85f41ea2f48e7b9f job 3/3 submitted (Job ID: 1358116, dependency: 1358115)
+[2025-11-07 16:22:23] Stage 2 Branch 23f76ceda31d1ebe job 1/3 submitted (Job ID: 1358117)
+[2025-11-07 16:22:23] Stage 2 Branch 23f76ceda31d1ebe job 2/3 submitted (Job ID: 1358118, dependency: 1358117)
+[2025-11-07 16:22:23] Stage 2 Branch 23f76ceda31d1ebe job 3/3 submitted (Job ID: 1358119, dependency: 1358118)
+[2025-11-07 16:22:23] Stage 2 Branch eb8c30ec3e8c9721 job 1/3 submitted (Job ID: 1358120)
+[2025-11-07 16:22:23] Stage 2 Branch eb8c30ec3e8c9721 job 2/3 submitted (Job ID: 1358121, dependency: 1358120)
+[2025-11-07 16:22:23] Stage 2 Branch eb8c30ec3e8c9721 job 3/3 submitted (Job ID: 1358122, dependency: 1358121)
+[2025-11-08 01:32:00] Stage 2 Branch 85f41ea2f48e7b9f started (SLURM Job: 1358114)
+[2025-11-08 01:32:31] Stage 2 Branch eb8c30ec3e8c9721 started (SLURM Job: 1358120)
+[2025-11-08 01:32:31] Stage 2 Branch 23f76ceda31d1ebe started (SLURM Job: 1358117)
+[2025-11-08 05:08:37] Stage 2 Branch eb8c30ec3e8c9721 ended (SLURM Job: 1358120)
+[2025-11-08 05:17:48] Stage 2 Branch 85f41ea2f48e7b9f ended (SLURM Job: 1358114)
+[2025-11-08 05:19:43] Stage 2 Branch eb8c30ec3e8c9721 started (SLURM Job: 1358121)
+[2025-11-08 05:19:48] Stage 2 Branch eb8c30ec3e8c9721 ended (SLURM Job: 1358121)
+[2025-11-08 05:32:44] Stage 2 Branch 85f41ea2f48e7b9f started (SLURM Job: 1358115)
+[2025-11-08 05:32:53] Stage 2 Branch 85f41ea2f48e7b9f ended (SLURM Job: 1358115)
+[2025-11-08 05:34:40] Stage 2 Branch eb8c30ec3e8c9721 started (SLURM Job: 1358122)
+[2025-11-08 05:34:45] Stage 2 Branch eb8c30ec3e8c9721 ended (SLURM Job: 1358122)
+[2025-11-08 05:35:55] Stage 2 Branch 23f76ceda31d1ebe started (SLURM Job: 1358118)
+[2025-11-08 05:41:02] Stage 2 Branch 23f76ceda31d1ebe ended (SLURM Job: 1358118)
+[2025-11-08 05:42:15] Stage 2 Branch 85f41ea2f48e7b9f started (SLURM Job: 1358116)
+[2025-11-08 05:42:21] Stage 2 Branch 85f41ea2f48e7b9f ended (SLURM Job: 1358116)
+[2025-11-08 06:22:45] Stage 2 Branch 23f76ceda31d1ebe started (SLURM Job: 1358119)
+[2025-11-08 06:22:57] Stage 2 Branch 23f76ceda31d1ebe ended (SLURM Job: 1358119)
+[2025-11-09 10:17:53] Stage 1 completed
+[2025-11-09 10:17:54] Stage 2 Branch 85f41ea2f48e7b9f completed
+[2025-11-09 10:17:54] Stage 2 Branch 23f76ceda31d1ebe completed
+[2025-11-09 10:17:54] Stage 2 Branch eb8c30ec3e8c9721 completed
+[2025-11-09 10:17:54] Stage 2 completed (all branches done)
+[2025-11-09 10:17:54] Stage 3 submitted (Job ID: 1360021)
+[2025-11-09 15:43:26] Stage 1 completed
+[2025-11-09 15:43:26] Stage 2 completed (all branches done)
+[2025-11-09 15:43:26] Stage 3 submitted (Job ID: 1360167)

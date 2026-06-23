@@ -1,0 +1,1 @@
+Which tribo/piezo-powered, skin-conformal platforms (CNT/graphene networks, ionic gels) sustain continuous metabolite/ion monitoring without batteries—what power densities and duty-cycled readouts are practical for week-scale operation?

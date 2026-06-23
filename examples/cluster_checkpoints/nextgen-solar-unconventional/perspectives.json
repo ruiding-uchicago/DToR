@@ -1,0 +1,19 @@
+{
+  "topic": "Perovskite\u2013silicon tandem cells, organic photovoltaics, and quantum-dot solar cells currently represent the forefront of next-generation solar technologies. Beyond these established platforms, which unconventional material classes or innovative device architectures\u2014such as chalcogenide perovskites, 2D semiconductor heterostructures, or ferroelectric photovoltaic systems\u2014offer the most unexpected promise for achieving breakthroughs in efficiency, stability, and scalability?",
+  "perspectives": [
+    {
+      "id": "612a03a5e5825aeb",
+      "perspective": "Chalcogenide and Double Perovskites as Lead\u2011Free Tandem Absorbers"
+    },
+    {
+      "id": "898bc88b10793f67",
+      "perspective": "Van der Waals 2D Semiconductor Heterostructures for Multi\u2011Junction Photovoltaics"
+    },
+    {
+      "id": "510e0cd4a1cd3a61",
+      "perspective": "Ferroelectric and Bulk Photovoltaic Effect Materials for Self\u2011Biasing Solar Cells"
+    }
+  ],
+  "timestamp": "2025-11-07T13:17:56.112258",
+  "thread_id": "research_a26d75"
+}

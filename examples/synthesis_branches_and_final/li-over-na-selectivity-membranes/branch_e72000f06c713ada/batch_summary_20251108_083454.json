@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 0.24706412777777778,
+  "reports_generated": [
+    "synthesis_branches_and_final/li-over-na-selectivity-membranes/branch_e72000f06c713ada/research_topics_Li_over_Na_Selectivity_Membranes.txt/final_report_20251108_083454.md"
+  ],
+  "can_resume": false
+}

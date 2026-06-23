@@ -1,0 +1,9 @@
+# Build deps for the local paper-RAG example (matches DToR's pinned versions).
+langchain>=0.3,<0.4
+langchain-community>=0.3,<0.4
+langchain-chroma==0.2.6
+chromadb==1.0.21
+sentence-transformers>=2.7
+beautifulsoup4
+lxml
+torch

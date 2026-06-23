@@ -1,0 +1,19 @@
+{
+  "topic": "Which printed\u2010electronics fabrication parameters and post\u2010processing strategies\u2014such as ink viscosity, printing speed and resolution, substrate surface energy, annealing temperature profiles, and in\u2010line calibration methods\u2014have been shown to minimize device\u2010to\u2010device variability in FET sensor arrays, and what specific process windows achieve low variation in threshold voltage and field\u2010effect mobility?",
+  "perspectives": [
+    {
+      "id": "2733a949f32e09bd",
+      "perspective": "Ink Formulation & Rheology Optimization"
+    },
+    {
+      "id": "4db7e6967e537dc8",
+      "perspective": "Printing Parameters & Substrate Surface Engineering"
+    },
+    {
+      "id": "925d32c3b1c5b902",
+      "perspective": "In\u2011Line Calibration, Thermal Profiles & Data\u2011Driven Process Control"
+    }
+  ],
+  "timestamp": "2025-11-07T13:19:04.564364",
+  "thread_id": "research_3704bc"
+}

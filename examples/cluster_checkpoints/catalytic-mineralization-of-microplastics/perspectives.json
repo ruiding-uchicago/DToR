@@ -1,0 +1,19 @@
+{
+  "topic": "Which ROS-generating photocatalysts and micromotor architectures achieve verifiable depolymerization/mineralization of common MPs (PE, PP, PET) in real waters\u2014what mineralization fractions, spectra, and by-product toxicology benchmarks define \"true cleanup\"?",
+  "perspectives": [
+    {
+      "id": "7cb24c3ccfdf0bc6",
+      "perspective": "Catalyst\u2011Centric Design of ROS\u2011Generating Photocatalysts for Polyolefin and PET Degradation"
+    },
+    {
+      "id": "a959099c071015b1",
+      "perspective": "Micromotor Architecture Optimization for In\u2011Situ Reactive Oxygen Species Delivery in Complex Aquatic Environments"
+    },
+    {
+      "id": "9202eacc29e07ea7",
+      "perspective": "Defining \u2018True Cleanup\u2019: Integrated Toxicological Benchmarks and Analytical Fingerprints for Mineralisation Assessment"
+    }
+  ],
+  "timestamp": "2025-11-07T13:15:17.240068",
+  "thread_id": "research_1877e9"
+}

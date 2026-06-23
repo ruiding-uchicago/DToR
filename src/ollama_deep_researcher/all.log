@@ -1,0 +1,1738 @@
+version = "0.0.1"import os
+from enum import Enum
+from pydantic import BaseModel, Field, model_validator
+from typing import Any, Optional, Literal, List, Union
+
+from langchain_core.runnables import RunnableConfig
+defaul_config_long_recursion = RunnableConfig(recursion_limit=200)
+
+###
+class SearchAPI(Enum):
+    PERPLEXITY = "perplexity"
+    TAVILY = "tavily"
+    DUCKDUCKGO = "duckduckgo"
+    SEARXNG = "searxng"
+
+class Configuration(BaseModel):
+    """The configurable fields for the research assistant."""
+
+    max_web_research_loops: int = Field(
+        default=3,
+        title="Research Depth",
+        description="Number of research iterations to perform"
+    )
+    local_llm: str = Field(
+        default="deepseek-r1:14b",
+        title="LLM Model Name",
+        description="Name of the LLM model to use"
+    )
+    llm_provider: Literal["ollama", "lmstudio"] = Field(
+        default="ollama",
+        title="LLM Provider",
+        description="Provider for the LLM (Ollama or LMStudio)"
+    )
+    search_api: Literal["perplexity", "tavily", "duckduckgo", "searxng"] = Field(
+        default="duckduckgo",
+        title="Search API",
+        description="Web search API to use"
+    )
+    fetch_full_page: bool = Field(
+        default=True,
+        title="Fetch Full Page",
+        description="Include the full page content in the search results"
+    )
+    ollama_base_url: str = Field(
+        default="http://localhost:11434/",
+        title="Ollama Base URL",
+        description="Base URL for Ollama API"
+    )
+    lmstudio_base_url: str = Field(
+        default="http://localhost:1234/v1",
+        title="LMStudio Base URL",
+        description="Base URL for LMStudio OpenAI-compatible API"
+    )
+    strip_thinking_tokens: bool = Field(
+        default=True,
+        title="Strip Thinking Tokens",
+        description="Whether to strip <think> tokens from model responses"
+    )
+    use_local_rag: bool = Field(
+        default=True,
+        title="Use Local RAG",
+        description="Whether to use local vector store for RAG before web search"
+    )
+    vector_store_paths: List[str] = Field(
+        default=["/home/ruiding/langchain_agent/vector_store/vol_151"],
+        title="Vector Store Paths",
+        description="Paths to local vector stores, comma-separated if multiple"
+    )
+    local_results_count: int = Field(
+        default=5,
+        title="Local Results Count",
+        description="Number of chunks to retrieve from local vector store"
+    )
+    embedding_model: str = Field(
+        default="BAAI/bge-m3",
+        title="Embedding Model",
+        description="Embedding model to use for vector store queries"
+    )
+    recursion_limit: int = Field(
+        default=200,
+        title="Recursion Limit",
+        description="Maximum number of times a call can recurse"
+    )
+    
+    @model_validator(mode='before')
+    @classmethod
+    def parse_vector_store_paths(cls, data: Any) -> Any:
+        """Parse vector_store_paths from string to list if needed."""
+        if isinstance(data, dict) and 'vector_store_paths' in data:
+            # If it's a string, split by comma to make a list
+            if isinstance(data['vector_store_paths'], str):
+                data['vector_store_paths'] = [
+                    path.strip() for path in data['vector_store_paths'].split(',')
+                ]
+        return data
+    
+    @classmethod
+    def from_runnable_config(
+        cls, config: Optional[defaul_config_long_recursion] = None
+    ) -> "Configuration":
+        """Create a Configuration instance from a RunnableConfig."""
+        configurable = (
+            config["configurable"] if config and "configurable" in config else {}
+        )
+        
+        # Get raw values from environment or config
+        raw_values: dict[str, Any] = {
+            name: os.environ.get(name.upper(), configurable.get(name))
+            for name in cls.model_fields.keys()
+        }
+        
+        # Filter out None values
+        values = {k: v for k, v in raw_values.items() if v is not None}
+        
+        return cls(**values)import json
+import os
+
+from typing_extensions import Literal
+
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.runnables import RunnableConfig
+from langchain_ollama import ChatOllama
+from langgraph.graph import START, END, StateGraph
+
+from ollama_deep_researcher.configuration import Configuration, SearchAPI
+from ollama_deep_researcher.utils import deduplicate_and_format_sources, tavily_search, format_sources, perplexity_search, duckduckgo_search, searxng_search, strip_thinking_tokens, get_config_value, query_local_vector_store, find_volume_paths
+from ollama_deep_researcher.state import SummaryState, SummaryStateInput, SummaryStateOutput
+from ollama_deep_researcher.prompts import query_writer_instructions, complementary_query_writer_instructions, summarizer_instructions, reflection_instructions, get_current_date
+from ollama_deep_researcher.lmstudio import ChatLMStudio
+defaul_config_long_recursion = RunnableConfig(recursion_limit=200)
+# Nodes
+def generate_query(state: SummaryState, config: RunnableConfig):
+    """LangGraph node that generates a search query based on the research topic.
+    
+    Uses an LLM to create an optimized search query for web research based on
+    the user's research topic. Supports both LMStudio and Ollama as LLM providers.
+    
+    Args:
+        state: Current graph state containing the research topic
+        config: Configuration for the runnable, including LLM provider settings
+        
+    Returns:
+        Dictionary with state update, including search_query key containing the generated query
+    """
+
+    # Format the prompt
+    current_date = get_current_date()
+    formatted_prompt = query_writer_instructions.format(
+        current_date=current_date,
+        research_topic=state.research_topic
+    )
+
+    # Generate a query
+    configurable = Configuration.from_runnable_config(defaul_config_long_recursion)
+    #quick check the recursion limit
+    print(f"recursion limit: {configurable.recursion_limit}")
+    #save this to a local file  
+    with open("recursion_limit.txt", "w") as f:
+        f.write(f"recursion limit: {configurable.recursion_limit}")
+    # Choose the appropriate LLM based on the provider
+    if configurable.llm_provider == "lmstudio":
+        llm_json_mode = ChatLMStudio(
+            base_url=configurable.lmstudio_base_url, 
+            model=configurable.local_llm, 
+            temperature=0, 
+            format="json"
+        )
+    else: # Default to Ollama
+        llm_json_mode = ChatOllama(
+            base_url=configurable.ollama_base_url, 
+            model=configurable.local_llm, 
+            temperature=0, 
+            format="json"
+        )
+    
+    result = llm_json_mode.invoke(
+        [SystemMessage(content=formatted_prompt),
+        HumanMessage(content=f"Generate a query for web search:")]
+    )
+    
+    # Get the content
+    content = result.content
+
+    # Parse the JSON response and get the query
+    try:
+        query = json.loads(content)
+        search_query = query['query']
+    except (json.JSONDecodeError, KeyError):
+        # If parsing fails or the key is not found, use a fallback query
+        if configurable.strip_thinking_tokens:
+            content = strip_thinking_tokens(content)
+        search_query = content
+    return {"search_query": search_query}
+
+def local_rag_research(state: SummaryState, config: RunnableConfig):
+    """LangGraph node that performs local RAG (Retrieval Augmented Generation) using the search query.
+    
+    Queries local vector stores for relevant documents based on the search query.
+    This is done before any web search to leverage existing knowledge.
+    
+    Args:
+        state: Current graph state containing the search query
+        config: Configuration for the runnable, including vector store paths and settings
+        
+    Returns:
+        Dictionary with state update, including local_research_results and local_sources_gathered
+    """
+    # Configure
+    configurable = Configuration.from_runnable_config(defaul_config_long_recursion)
+    
+    # Skip if use_local_rag is false
+    if not configurable.use_local_rag:
+        return {"local_research_results": [], "local_sources_gathered": []}
+    
+    # Get vector store paths
+    vector_paths = []
+    
+    # Process each configured path to find all volumes
+    for base_path in configurable.vector_store_paths:
+        # Find all volume directories in this base path
+        volume_paths = find_volume_paths(base_path)
+        vector_paths.extend(volume_paths)
+    
+    # Query local vector store
+    search_results = query_local_vector_store(
+        query=state.search_query,
+        vector_store_paths=vector_paths,
+        embedding_model=configurable.embedding_model,
+        limit=configurable.local_results_count
+    )
+    
+    # Format results
+    search_str = deduplicate_and_format_sources(search_results, max_tokens_per_source=2500, fetch_full_page=True)
+    local_sources = format_sources(search_results)
+    
+    return {
+        "local_research_results": [search_str],
+        "local_sources_gathered": [local_sources]
+    }
+
+def generate_complementary_query(state: SummaryState, config: RunnableConfig):
+    """LangGraph node that generates a complementary search query based on local RAG results.
+    
+    Analyzes local knowledge to create a query that explores a different but related angle 
+    of the research topic, ensuring diverse search results.
+    
+    Args:
+        state: Current graph state containing the original search query and local RAG results
+        config: Configuration for the runnable, including LLM provider settings
+        
+    Returns:
+        Dictionary with state update, including complementary_search_query containing the diversified query
+    """
+    # If local RAG is disabled or no results, return empty query
+    
+    configurable = Configuration.from_runnable_config(defaul_config_long_recursion)
+    print(f"=== ENTERING generate_complementary_query ===")
+    print(f"use_local_rag: {configurable.use_local_rag}, local_research_results: {state.local_research_results}")
+    print(f"type: {type(state.local_research_results)}, is empty: {not state.local_research_results}")
+    
+    # Debug the conditional evaluation directly
+    condition_part1 = not configurable.use_local_rag
+    condition_part2 = not state.local_research_results
+    print(f"condition_part1 (not use_local_rag): {condition_part1}")
+    print(f"condition_part2 (not local_research_results): {condition_part2}")
+    print(f"full condition: {condition_part1 or condition_part2}")
+    
+    if not configurable.use_local_rag or not state.local_research_results:
+        # Return empty result, forcing the system to skip this search
+        print("Returning empty complementary query!")
+        return {"complementary_search_query": ""}
+        
+    # Format the prompt
+    current_date = get_current_date()
+    # use local_rag_summary instead of local_research_results 
+    local_rag_result = state.local_rag_summary
+    
+    # Use a simplified prompt format instead of the complex one that might confuse the model
+    formatted_prompt = f"""Your goal is to generate a complementary search query based on local knowledge.
+
+<CONTEXT>
+Current date: {current_date}
+Original research topic: {state.research_topic}
+Original search query: {state.search_query}
+</CONTEXT>
+
+
+<GOAL>
+Generate a different but related query that explores a new angle on the research topic.
+</GOAL>
+
+<FORMAT>
+Format your response as a JSON object with this exact key:
+   - "query": A search query that explores a different angle of the research topic
+</FORMAT>
+
+<EXAMPLE>
+Example output:
+{{
+    "query": "(think of a different angle on alternative or complementary approaches to) {state.research_topic}"
+}}
+</EXAMPLE>
+
+Provide your response in JSON format:"""
+    
+    print(f"Using research_topic: {state.research_topic}")
+    print(f"Using original_query: {state.search_query}")
+    print(f"Local RAG result length: {len(local_rag_result)}")
+    print(f"Formatted prompt first 200 chars: {formatted_prompt[:200]}...")
+    print(f"Local RAG summary: {state.local_rag_summary}")
+
+    # Choose the appropriate LLM based on the provider
+    if configurable.llm_provider == "lmstudio":
+        print(f"Using LMStudio with base_url: {configurable.lmstudio_base_url}, model: {configurable.local_llm}")
+        llm_json_mode = ChatLMStudio(
+            base_url=configurable.lmstudio_base_url, 
+            model=configurable.local_llm, 
+            temperature=0,  # Changed from 0.3 to 0 to match other working nodes
+            format="json"
+        )
+    else: # Default to Ollama
+        print(f"Using Ollama with base_url: {configurable.ollama_base_url}, model: {configurable.local_llm}")
+        llm_json_mode = ChatOllama(
+            base_url=configurable.ollama_base_url, 
+            model=configurable.local_llm, 
+            temperature=0,  # Changed from 0.3 to 0 to match other working nodes
+            format="json"
+        )
+    
+    print("About to invoke LLM...")
+    try:
+        # Make the human message explicit about what we want
+        result = llm_json_mode.invoke(
+            [SystemMessage(content=formatted_prompt),
+             HumanMessage(content="Based on the following local RAG summary, <LOCAL_KNOWLEDGE> {state.local_rag_summary}</LOCAL_KNOWLEDGE>. Generate a complementary query (different from the original query {state.search_query}) in JSON format with ONLY a 'query' field:")]
+        )
+        print("LLM invocation completed")
+    except Exception as e:
+        print(f"Error during LLM invocation: {e}")
+        # Fallback if LLM fails
+        return {"complementary_search_query": f"Alternative perspectives on {state.research_topic}"}
+    
+    # Get the content
+    content = result.content
+    print(f"Raw LLM response: {content[:300]}...")
+
+    # Parse the JSON response and get the complementary query
+    try:
+        query_data = json.loads(content)
+        print(f"Full parsed JSON: {query_data}")
+        
+        # Try to get the query from the 'query' key which we asked for in our prompt
+        if 'query' in query_data and query_data['query']:
+            complementary_query = query_data['query']
+            print(f"Found query: {complementary_query}")
+        else:
+            # Try other possible keys as fallback
+            possible_keys = ['complementary_query', 'search_query', 'follow_up_query']
+            complementary_query = ""
+            
+            for key in possible_keys:
+                if key in query_data and query_data[key]:
+                    complementary_query = query_data[key]
+                    print(f"Found query under alternative key '{key}': {complementary_query}")
+                    break
+        
+        # If still empty, try to use the entire content as the query if it looks like plain text
+        if not complementary_query and not content.startswith('{') and not content.startswith('['):
+            print("Using raw content as query")
+            complementary_query = content.strip()
+        
+        # Last resort fallback
+        if not complementary_query:
+            print("Empty complementary query generated, using fallback")
+            complementary_query = f"Alternative aspects of {state.research_topic}"
+            
+        print(f"Final complementary query: '{complementary_query}'")
+        return {"complementary_search_query": complementary_query}
+    except (json.JSONDecodeError, KeyError) as e:
+        # If parsing fails, return empty query instead of using a fallback
+        print(f"JSON parsing failed with error: {e}")
+        print(f"Raw content: {content[:200]}...")
+        
+        # Try to use the raw content if it's not JSON
+        if not content.startswith('{') and not content.startswith('['):
+            print("Using raw content as query since it's not JSON")
+            return {"complementary_search_query": content.strip()}
+            
+        if configurable.strip_thinking_tokens:
+            content = strip_thinking_tokens(content)
+            print(f"After stripping tokens: {content[:200]}...")
+            
+        print("All attempts failed - returning fallback query")
+        return {"complementary_search_query": f"Different perspectives on {state.research_topic}"}
+
+def web_research(state: SummaryState, config: RunnableConfig):
+    """LangGraph node that performs web research using the generated search query.
+    
+    Executes a web search using the configured search API (tavily, perplexity, 
+    duckduckgo, or searxng) and formats the results for further processing.
+    
+    Args:
+        state: Current graph state containing the search query and research loop count
+        config: Configuration for the runnable, including search API settings
+        
+    Returns:
+        Dictionary with state update, including sources_gathered, research_loop_count, and web_research_results
+    """
+
+    # Configure
+    configurable = Configuration.from_runnable_config(defaul_config_long_recursion)
+
+    # Get the search API
+    search_api = get_config_value(configurable.search_api)
+
+    # Search the web
+    if search_api == "tavily":
+        search_results = tavily_search(state.search_query, fetch_full_page=configurable.fetch_full_page, max_results=3)
+        search_str = deduplicate_and_format_sources(search_results, max_tokens_per_source=2500, fetch_full_page=configurable.fetch_full_page)
+    elif search_api == "perplexity":
+        search_results = perplexity_search(state.search_query, state.research_loop_count)
+        search_str = deduplicate_and_format_sources(search_results, max_tokens_per_source=2500, fetch_full_page=configurable.fetch_full_page)
+    elif search_api == "duckduckgo":
+        search_results = duckduckgo_search(state.search_query, max_results=5, fetch_full_page=configurable.fetch_full_page)
+        search_str = deduplicate_and_format_sources(search_results, max_tokens_per_source=2500, fetch_full_page=configurable.fetch_full_page)
+    elif search_api == "searxng":
+        search_results = searxng_search(state.search_query, max_results=5, fetch_full_page=configurable.fetch_full_page)
+        search_str = deduplicate_and_format_sources(search_results, max_tokens_per_source=2500, fetch_full_page=configurable.fetch_full_page)
+    else:
+        raise ValueError(f"Unsupported search API: {configurable.search_api}")
+
+    return {"sources_gathered": [format_sources(search_results)], "research_loop_count": state.research_loop_count + 1, "web_research_results": [search_str]}
+
+def complementary_web_research(state: SummaryState, config: RunnableConfig):
+    """LangGraph node that performs web research using the complementary search query.
+    
+    Similar to the web_research node but uses the complementary search query that explores
+    a different but related angle of the research topic.
+    
+    Args:
+        state: Current graph state containing the complementary search query
+        config: Configuration for the runnable, including search API settings
+        
+    Returns:
+        Dictionary with state update, including complementary_sources_gathered and complementary_web_research_results
+    """
+    # Configure
+    configurable = Configuration.from_runnable_config(defaul_config_long_recursion)
+
+    # Get the search API
+    search_api = get_config_value(configurable.search_api)
+
+    # If complementary query is not available, skip this node
+    if not state.complementary_search_query:
+        return {"complementary_sources_gathered": [], "complementary_web_research_results": []}
+
+    # Search the web with complementary query
+    if search_api == "tavily":
+        search_results = tavily_search(state.complementary_search_query, fetch_full_page=configurable.fetch_full_page, max_results=1)
+        search_str = deduplicate_and_format_sources(search_results, max_tokens_per_source=2500, fetch_full_page=configurable.fetch_full_page)
+    elif search_api == "perplexity":
+        search_results = perplexity_search(state.complementary_search_query, state.research_loop_count)
+        search_str = deduplicate_and_format_sources(search_results, max_tokens_per_source=2500, fetch_full_page=configurable.fetch_full_page)
+    elif search_api == "duckduckgo":
+        search_results = duckduckgo_search(state.complementary_search_query, max_results=3, fetch_full_page=configurable.fetch_full_page)
+        search_str = deduplicate_and_format_sources(search_results, max_tokens_per_source=2500, fetch_full_page=configurable.fetch_full_page)
+    elif search_api == "searxng":
+        search_results = searxng_search(state.complementary_search_query, max_results=3, fetch_full_page=configurable.fetch_full_page)
+        search_str = deduplicate_and_format_sources(search_results, max_tokens_per_source=2500, fetch_full_page=configurable.fetch_full_page)
+    else:
+        raise ValueError(f"Unsupported search API: {configurable.search_api}")
+
+    return {
+        "complementary_sources_gathered": [format_sources(search_results)], 
+        "complementary_web_research_results": [search_str]
+    }
+
+def summarize_sources(state: SummaryState, config: RunnableConfig):
+    """LangGraph node that summarizes research results from both local and web sources.
+    
+    Uses an LLM to create or update a running summary based on the newest research 
+    results, integrating them with any existing summary.
+    
+    Args:
+        state: Current graph state containing research topic, running summary,
+              and research results from both local and web sources
+        config: Configuration for the runnable, including LLM provider settings
+        
+    Returns:
+        Dictionary with state update, including running_summary key containing the updated summary
+    """
+
+    # Existing summary
+    existing_summary = state.running_summary
+
+    # Get the most recent research results
+    research_content = ""
+    
+    # Add local research results if available
+    if state.local_research_results and len(state.local_research_results) > 0:
+        research_content += f"<Local Research Results>\n{state.local_research_results[-1]}\n</Local Research Results>\n\n"
+    
+    # Add web research results from original query if available
+    if state.web_research_results and len(state.web_research_results) > 0:
+        research_content += f"<Main Research Results>\n{state.web_research_results[-1]}\n</Main Research Results>\n\n"
+    
+    # Add complementary web research results if available
+    if state.complementary_web_research_results and len(state.complementary_web_research_results) > 0:
+        research_content += f"<Complementary Research Results>\n{state.complementary_web_research_results[-1]}\n</Complementary Research Results>\n\n"
+
+    # Build the human message
+    if existing_summary:
+        human_message_content = (
+            f"<Existing Summary> \n {existing_summary} \n <Existing Summary>\n\n"
+            f"<New Context> \n {research_content} \n <New Context>"
+            f"Update the Existing Summary with the New Context on this topic: \n <User Input> \n {state.research_topic} \n <User Input>\n\n"
+        )
+    else:
+        human_message_content = (
+            f"<Context> \n {research_content} \n <Context>"
+            f"Create a Summary using the Context on this topic: \n <User Input> \n {state.research_topic} \n <User Input>\n\n"
+        )
+
+    # Run the LLM
+    configurable = Configuration.from_runnable_config(defaul_config_long_recursion)
+    
+    # Choose the appropriate LLM based on the provider
+    if configurable.llm_provider == "lmstudio":
+        llm = ChatLMStudio(
+            base_url=configurable.lmstudio_base_url, 
+            model=configurable.local_llm, 
+            temperature=0
+        )
+    else:  # Default to Ollama
+        llm = ChatOllama(
+            base_url=configurable.ollama_base_url, 
+            model=configurable.local_llm, 
+            temperature=0
+        )
+    
+    result = llm.invoke(
+        [SystemMessage(content=summarizer_instructions),
+        HumanMessage(content=human_message_content)]
+    )
+
+    # Strip thinking tokens if configured
+    running_summary = result.content
+    if configurable.strip_thinking_tokens:
+        running_summary = strip_thinking_tokens(running_summary)
+    
+    # Add current summary to summary_history
+    # Create an object with metadata about this summary iteration
+    iteration_summary = {
+        "iteration": state.research_loop_count,
+        "summary": running_summary,
+        "query": state.search_query,
+        "complementary_query": state.complementary_search_query if state.complementary_search_query else ""
+    }
+    
+    # Return updated state with the new summary and updated history
+    return {
+        "running_summary": running_summary,
+        "summary_history": [iteration_summary]
+    }
+
+def reflect_on_summary(state: SummaryState, config: RunnableConfig):
+    """LangGraph node that identifies knowledge gaps and generates follow-up queries.
+    
+    Analyzes the current summary to identify areas for further research and generates
+    a new search query to address those gaps. Uses structured output to extract
+    the follow-up query in JSON format.
+    
+    Args:
+        state: Current graph state containing the running summary and research topic
+        config: Configuration for the runnable, including LLM provider settings
+        
+    Returns:
+        Dictionary with state update, including search_query key containing the generated follow-up query
+    """
+
+    # Generate a query
+    configurable = Configuration.from_runnable_config(defaul_config_long_recursion)
+    
+    # Choose the appropriate LLM based on the provider
+    if configurable.llm_provider == "lmstudio":
+        llm_json_mode = ChatLMStudio(
+            base_url=configurable.lmstudio_base_url, 
+            model=configurable.local_llm, 
+            temperature=0, 
+            format="json"
+        )
+    else: # Default to Ollama
+        llm_json_mode = ChatOllama(
+            base_url=configurable.ollama_base_url, 
+            model=configurable.local_llm, 
+            temperature=0, 
+            format="json"
+        )
+    
+    result = llm_json_mode.invoke(
+        [SystemMessage(content=reflection_instructions.format(research_topic=state.research_topic)),
+        HumanMessage(content=f"Reflect on our existing knowledge: \n === \n {state.running_summary}, \n === \n And now identify a knowledge gap and generate a follow-up web search query:")]
+    )
+    
+    # Strip thinking tokens if configured
+    try:
+        # Try to parse as JSON first
+        reflection_content = json.loads(result.content)
+        # Get the follow-up query
+        query = reflection_content.get('follow_up_query')
+        # Check if query is None or empty
+        if not query:
+            # Use a fallback query
+            return {"search_query": f"Tell me more about {state.research_topic}"}
+        return {"search_query": query}
+    except (json.JSONDecodeError, KeyError, AttributeError):
+        # If parsing fails or the key is not found, use a fallback query
+        return {"search_query": f"Tell me more about {state.research_topic}"}
+        
+def finalize_summary(state: SummaryState, config: RunnableConfig):
+    """LangGraph node that finalizes the research summary.
+    
+    Uses an LLM to create a comprehensive final summary by analyzing multiple iterations 
+    of research summaries. Then combines this with deduplicated sources to create a 
+    well-structured research report with proper citations.
+    
+    Args:
+        state: Current graph state containing the running summary, summary history, and sources gathered
+        config: Configuration for the runnable, including LLM provider settings
+        
+    Returns:
+        Dictionary with state update, including running_summary key containing the formatted final summary with sources
+    """
+    # Configure LLM
+    configurable = Configuration.from_runnable_config(defaul_config_long_recursion)
+    
+    # Choose the appropriate LLM based on the provider
+    if configurable.llm_provider == "lmstudio":
+        llm = ChatLMStudio(
+            base_url=configurable.lmstudio_base_url, 
+            model=configurable.local_llm, 
+            temperature=0
+        )
+    else:  # Default to Ollama
+        llm = ChatOllama(
+            base_url=configurable.ollama_base_url, 
+            model=configurable.local_llm, 
+            temperature=0
+        )
+    
+    # Process summary history for use in the final synthesis
+    # If we have summary history, we'll use that; otherwise we'll use the running_summary
+    summary_history_text = ""
+    
+    if state.summary_history and len(state.summary_history) > 0:
+        # We have summary history, format it for the LLM
+        for i, summary_item in enumerate(state.summary_history):
+            summary_history_text += f"\n--- ITERATION {summary_item.get('iteration', i+1)} ---\n"
+            summary_history_text += f"Search Query: {summary_item.get('query', 'Unknown')}\n"
+            if summary_item.get('complementary_query'):
+                summary_history_text += f"Complementary Query: {summary_item.get('complementary_query')}\n"
+            summary_history_text += f"Summary:\n{summary_item.get('summary', '')}\n\n"
+    else:
+        # No history available, just use the current summary
+        summary_history_text = f"Only one research iteration was performed. Summary:\n{state.running_summary}"
+    
+    # Build the prompt
+    final_summary_prompt = f"""
+    <GOAL>
+    Create a comprehensive final research report on: {state.research_topic}
+    </GOAL>
+
+    <CONTEXT>
+    You have conducted {state.research_loop_count} iterations of research on this topic.
+    Below you'll find summaries from each research iteration.
+    </CONTEXT>
+
+    <RESEARCH_HISTORY>
+    {summary_history_text}
+    </RESEARCH_HISTORY>
+
+    <INSTRUCTIONS>
+    1. Create a well-structured, comprehensive final report that synthesizes all the research findings across iterations
+    2. Organize information logically with clear section headings
+    3. Highlight key insights, patterns, and conclusions
+    4. Show how the research evolved across iterations, noting how later iterations built upon or shifted from earlier findings
+    5. Note any remaining gaps or areas for future research
+    6. Make the report easy to read and understand for someone unfamiliar with the topic
+    7. Aim for ~1000-1500 words for the main content (not including sources)
+    </INSTRUCTIONS>
+    """
+    
+    # Get the final summary from the LLM
+    result = llm.invoke(
+        [SystemMessage(content=final_summary_prompt),
+         HumanMessage(content=f"The User has queried for a comprehensive research on \n<User Input>\n {state.research_topic} \n <User Input>. Based on the <RESEARCH_HISTORY>, please create the final comprehensive research report on: {state.research_topic}")]
+    )
+    
+    # Strip thinking tokens if configured
+    final_content = result.content
+    if configurable.strip_thinking_tokens:
+        final_content = strip_thinking_tokens(final_content)
+    
+    # Deduplicate sources before joining
+    seen_sources = set()
+    unique_sources = []
+    
+    # Process web sources from original query
+    for source in state.sources_gathered:
+        # Split the source into lines and process each individually
+        for line in source.split('\n'):
+            # Only process non-empty lines
+            if line.strip() and line not in seen_sources:
+                seen_sources.add(line)
+                unique_sources.append(line)
+    
+    # Process web sources from complementary query
+    for source in state.complementary_sources_gathered:
+        # Split the source into lines and process each individually
+        for line in source.split('\n'):
+            # Only process non-empty lines
+            if line.strip() and line not in seen_sources:
+                seen_sources.add(line)
+                unique_sources.append("🔍 " + line)  # Add a magnifying glass emoji to denote complementary search source
+    
+    # Process local sources
+    for source in state.local_sources_gathered:
+        # Split the source into lines and process each individually
+        for line in source.split('\n'):
+            # Only process non-empty lines
+            if line.strip() and line not in seen_sources:
+                seen_sources.add(line)
+                unique_sources.append("📚 " + line)  # Add a book emoji to denote local source
+    
+    # Join the deduplicated sources
+    all_sources = "\n".join(unique_sources)
+    
+    # Combine LLM-generated final summary with sources
+    final_report = f"{final_content}\n\n### Sources:\n{all_sources}"
+    
+    return {"running_summary": final_report}
+
+def summarize_local_rag_results(state: SummaryState, config: RunnableConfig):
+    """LangGraph node that summarizes local RAG results before generating a complementary query.
+    
+    Creates a concise summary of the local RAG results to help with generating
+    a more focused complementary query.
+    
+    Args:
+        state: Current graph state containing the local RAG results
+        config: Configuration for the runnable, including LLM provider settings
+        
+    Returns:
+        Dictionary with state update, including local_rag_summary key
+    """
+    # If local RAG is disabled or no results, return empty summary
+    configurable = Configuration.from_runnable_config(defaul_config_long_recursion)
+    
+    if not configurable.use_local_rag or not state.local_research_results:
+        return {"local_rag_summary": ""}
+    
+    # Use all local RAG results, to be noted, the local_research_results is a list of strings
+    # so we need to join them together with two \n to form a single string rather than passing a list
+    local_rag_result = "\n\n".join(state.local_research_results)  if state.local_research_results else ""
+    #debug
+    print(f"Local RAG result: {local_rag_result}")
+    # Build the summary prompt
+    summary_prompt = f"""
+    <GOAL>
+    Create a concise summary (<500 characters) of the local knowledge provided below.
+    </GOAL>
+
+    <CONTEXT>
+    These are results from a local knowledge base search related to: {state.research_topic}
+    Search query used: {state.search_query}
+    </CONTEXT>
+
+
+    <INSTRUCTIONS>
+    1. Summarize the key findings, concepts, and information from the local knowledge
+    2. Focus on aspects that might suggest different angles to explore in further research
+    3. Keep your summary under 500 characters
+    4. Start with "After querying local literature with '{state.search_query}', we found that..."
+    </INSTRUCTIONS>
+    """
+    
+    # Choose the appropriate LLM based on the provider
+    if configurable.llm_provider == "lmstudio":
+        llm = ChatLMStudio(
+            base_url=configurable.lmstudio_base_url, 
+            model=configurable.local_llm, 
+            temperature=0
+        )
+    else:  # Default to Ollama
+        llm = ChatOllama(
+            base_url=configurable.ollama_base_url, 
+            model=configurable.local_llm, 
+            temperature=0
+        )
+    
+    # Get the summary from the LLM
+    result = llm.invoke(
+        [SystemMessage(content=summary_prompt),
+         HumanMessage(content=f"Please summarize the local knowledge base results: \n\n {local_rag_result}")]
+    )
+    
+    # Strip thinking tokens if configured
+    local_rag_summary = result.content
+    if configurable.strip_thinking_tokens:
+        local_rag_summary = strip_thinking_tokens(local_rag_summary)
+    
+    return {"local_rag_summary": local_rag_summary}
+
+def route_research(state: SummaryState, config: RunnableConfig) -> Literal["finalize_summary", "local_rag_research"]:
+    """LangGraph routing function that determines the next step in the research flow.
+    
+    Controls the research loop by deciding whether to continue gathering information
+    or to finalize the summary based on the configured maximum number of research loops.
+    
+    Args:
+        state: Current graph state containing the research loop count
+        config: Configuration for the runnable, including max_web_research_loops setting
+        
+    Returns:
+        String literal indicating the next node to visit ("local_rag_research" or "finalize_summary")
+    """
+
+    configurable = Configuration.from_runnable_config(defaul_config_long_recursion)
+    if state.research_loop_count <= configurable.max_web_research_loops:
+        return "local_rag_research"
+    else:
+        return "finalize_summary"
+
+# Add nodes and edges
+builder = StateGraph(SummaryState, input=SummaryStateInput, output=SummaryStateOutput, config_schema=Configuration)
+builder.add_node("generate_query", generate_query)
+builder.add_node("local_rag_research", local_rag_research)
+builder.add_node("summarize_local_rag_results", summarize_local_rag_results)
+builder.add_node("generate_complementary_query", generate_complementary_query)
+builder.add_node("web_research", web_research)
+builder.add_node("complementary_web_research", complementary_web_research)
+builder.add_node("summarize_sources", summarize_sources)
+builder.add_node("reflect_on_summary", reflect_on_summary)
+builder.add_node("finalize_summary", finalize_summary)
+
+# Add edges
+builder.add_edge(START, "generate_query")
+builder.add_edge("generate_query", "local_rag_research")
+builder.add_edge("local_rag_research", "summarize_local_rag_results")
+builder.add_edge("summarize_local_rag_results", "generate_complementary_query")
+builder.add_edge("generate_complementary_query", "web_research")
+builder.add_edge("web_research", "complementary_web_research")
+builder.add_edge("complementary_web_research", "summarize_sources")
+builder.add_edge("summarize_sources", "reflect_on_summary")
+builder.add_conditional_edges("reflect_on_summary", route_research)
+builder.add_edge("finalize_summary", END)
+
+graph = builder.compile()"""LMStudio integration for the research assistant."""
+
+import json
+import logging
+from typing import Any, List, Optional
+
+from langchain_core.callbacks.manager import CallbackManagerForLLMRun
+from langchain_core.messages import (
+    BaseMessage,
+)
+from langchain_core.outputs import ChatResult
+from langchain_openai import ChatOpenAI
+from pydantic import Field
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+class ChatLMStudio(ChatOpenAI):
+    """Chat model that uses LMStudio's OpenAI-compatible API."""
+    
+    format: Optional[str] = Field(default=None, description="Format for the response (e.g., 'json')")
+    
+    def __init__(
+        self,
+        base_url: str = "http://localhost:1234/v1",
+        model: str = "deepseek-r1:14b",
+        temperature: float = 0.7,
+        format: Optional[str] = None,
+        api_key: str = "not-needed-for-local-models",
+        **kwargs: Any,
+    ):
+        """Initialize the ChatLMStudio.
+        
+        Args:
+            base_url: Base URL for LMStudio's OpenAI-compatible API
+            model: Model name to use
+            temperature: Temperature for sampling
+            format: Format for the response (e.g., "json")
+            api_key: API key (not actually used, but required by OpenAI client)
+            **kwargs: Additional arguments to pass to the OpenAI client
+        """
+        # Initialize the base class
+        super().__init__(
+            base_url=base_url,
+            model=model,
+            temperature=temperature,
+            api_key=api_key,
+            **kwargs,
+        )
+        self.format = format
+        
+    def _generate(
+        self,
+        messages: List[BaseMessage],
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+        **kwargs: Any,
+    ) -> ChatResult:
+        
+        """Generate a chat response using LMStudio's OpenAI-compatible API."""
+        
+        if self.format == "json":
+            # Set response_format for JSON mode
+            kwargs["response_format"] = {"type": "json_object"}
+            logger.info(f"Using response_format={kwargs['response_format']}")
+        
+        # Call the parent class's _generate method
+        result = super()._generate(messages, stop, run_manager, **kwargs)
+        
+        # If JSON format is requested, try to clean up the response
+        if self.format == "json" and result.generations:
+            try:
+                # Get the raw text
+                raw_text = result.generations[0][0].text
+                logger.info(f"Raw model response: {raw_text}")
+                
+                # Try to find JSON in the response
+                json_start = raw_text.find('{')
+                json_end = raw_text.rfind('}') + 1
+                
+                if json_start >= 0 and json_end > json_start:
+                    # Extract just the JSON part
+                    json_text = raw_text[json_start:json_end]
+                    # Validate it's proper JSON
+                    json.loads(json_text)
+                    logger.info(f"Cleaned JSON: {json_text}")
+                    # Update the generation with the cleaned JSON
+                    result.generations[0][0].text = json_text
+                else:
+                    logger.warning("Could not find JSON in response")
+            except Exception as e:
+                logger.error(f"Error processing JSON response: {str(e)}")
+                # If any error occurs during cleanup, just use the original response
+                pass
+                
+        return result from datetime import datetime
+
+# Get current date in a readable format
+def get_current_date():
+    return datetime.now().strftime("%B %d, %Y")
+
+query_writer_instructions="""Your goal is to generate a targeted web search query.
+
+<CONTEXT>
+Current date: {current_date}
+Please ensure your queries account for the most current information available as of this date.
+</CONTEXT>
+
+<TOPIC>
+{research_topic}
+</TOPIC>
+
+<FORMAT>
+Format your response as a JSON object with ALL three of these exact keys:
+   - "query": The actual search query string
+   - "rationale": Brief explanation of why this query is relevant
+</FORMAT>
+
+<EXAMPLE>
+Example output:
+{{
+    "query": "machine learning transformer architecture explained",
+    "rationale": "Understanding the fundamental structure of transformer models"
+}}
+</EXAMPLE>
+
+Provide your response in JSON format:"""
+
+complementary_query_writer_instructions="""Your goal is to generate a COMPLEMENTARY web search query that explores a different angle of the research topic.
+
+<CONTEXT>
+Current date: {current_date}
+Original research topic: {research_topic}
+Original search query: {original_query}
+</CONTEXT>
+
+<LOCAL_KNOWLEDGE>
+{local_rag_results}
+</LOCAL_KNOWLEDGE>
+
+<GOAL>
+You must carefully analyze the local knowledge provided above to identify areas to explore that are DIFFERENT from but still RELEVANT to the original query.
+Rather than enhancing the original query, your task is to create a GENERALLY DIFFERENT query that:
+1. Explores an alternative aspect or perspective of the topic
+2. Targets information that is NOT present in the local knowledge but would be valuable
+3. Complements the original query by investigating related but distinct concepts
+4. Maintains relevance to the scientific domain (chemistry, materials science, engineering, etc.)
+5. Is GENERALLY DIFFERENT from the original query (avoid just adding words like "advanced" or "technical details")
+</GOAL>
+
+<FORMAT>
+Format your response as a JSON object with these exact keys:
+   - "complementary_query": A search query that explores a different angle of the research topic
+   - "divergent_aspect": Explain what different aspect of the topic this query explores
+   - "rationale": Why this complementary angle will provide valuable additional information
+</FORMAT>
+
+<EXAMPLE>
+Example for original query "machine learning transformer architecture explained":
+{{
+    "complementary_query": "limitations of attention mechanisms in large language models",
+    "divergent_aspect": "While the original query focuses on the architecture and structure, this explores the limitations and weaknesses",
+    "rationale": "Understanding both the strengths and limitations provides a more complete picture of transformer technology"
+}}
+</EXAMPLE>
+
+<EXAMPLE>
+Example for original query "novel chemical candidates selectively binding PFOA":
+{{
+    "complementary_query": "alternative remediation technologies for PFAS compounds beyond selective binding",
+    "divergent_aspect": "This explores different approaches to PFAS remediation beyond binding mechanisms",
+    "rationale": "A comprehensive solution may involve multiple remediation strategies working together"
+}}
+</EXAMPLE>
+
+Provide your response in JSON format:"""
+
+summarizer_instructions="""
+<GOAL>
+Generate a high-quality summary of the provided context.
+</GOAL>
+
+<REQUIREMENTS>
+When creating a NEW summary:
+1. Highlight the most relevant information related to the user topic from the search results
+2. Ensure a coherent flow of information
+
+When EXTENDING an existing summary:                                                                                                                 
+1. Read the existing summary and new search results carefully.                                                    
+2. Compare the new information with the existing summary.                                                         
+3. For each piece of new information:                                                                             
+    a. If it's related to existing points, integrate it into the relevant paragraph.                               
+    b. If it's entirely new but relevant, add a new paragraph with a smooth transition.                            
+    c. If it's not relevant to the user topic, skip it.                                                            
+4. Ensure all additions are relevant to the user's topic.                                                         
+5. Verify that your final output differs from the input summary.                                                                                                                                                            
+< /REQUIREMENTS >
+
+< FORMATTING >
+- Start directly with the updated summary, without preamble or titles. Do not use XML tags in the output.  
+< /FORMATTING >
+
+<Task>
+Think carefully about the provided Context first. Then generate a summary of the context to address the User Input.
+</Task>
+"""
+
+reflection_instructions = """You are an expert research assistant analyzing a summary about {research_topic}.
+
+<GOAL>
+1. Identify knowledge gaps or areas that need deeper exploration
+2. Generate a follow-up question that would help expand your understanding
+3. Focus on technical details, implementation specifics, or emerging trends that weren't fully covered
+</GOAL>
+
+<REQUIREMENTS>
+Ensure the follow-up question is self-contained and includes necessary context for web search.
+</REQUIREMENTS>
+
+<FORMAT>
+Format your response as a JSON object with these exact keys:
+- knowledge_gap: Describe what information is missing or needs clarification
+- follow_up_query: Write a specific question to address this gap
+</FORMAT>
+
+<Task>
+Reflect carefully on the Summary to identify knowledge gaps and produce a follow-up query. Then, produce your output following this JSON format:
+{{
+    "knowledge_gap": "The summary lacks information about performance metrics and benchmarks",
+    "follow_up_query": "What are typical performance benchmarks and metrics used to evaluate [specific technology]?"
+}}
+</Task>
+
+Provide your analysis in JSON format:"""import operator
+from dataclasses import dataclass, field
+from typing_extensions import Annotated
+
+@dataclass(kw_only=True)
+class SummaryState:
+    research_topic: str = field(default=None) # Report topic     
+    search_query: str = field(default=None) # Search query
+    complementary_search_query: str = field(default=None) # Complementary search query based on local RAG results
+    web_research_results: Annotated[list, operator.add] = field(default_factory=list) 
+    complementary_web_research_results: Annotated[list, operator.add] = field(default_factory=list) 
+    local_research_results: Annotated[list, operator.add] = field(default_factory=list) 
+    local_rag_summary: str = field(default=None) # Summary of local RAG resultss
+    sources_gathered: Annotated[list, operator.add] = field(default_factory=list) 
+    complementary_sources_gathered: Annotated[list, operator.add] = field(default_factory=list) 
+    local_sources_gathered: Annotated[list, operator.add] = field(default_factory=list)
+    research_loop_count: int = field(default=0) # Research loop count
+    running_summary: str = field(default=None) # Final report
+    summary_history: Annotated[list, operator.add] = field(default_factory=list) # History of summaries from each iteration
+
+@dataclass(kw_only=True)
+class SummaryStateInput:
+    research_topic: str = field(default=None) # Report topic     
+
+@dataclass(kw_only=True)
+class SummaryStateOutput:
+    running_summary: str = field(default=None) # Final reportimport os
+import glob
+import httpx
+import requests
+from typing import Dict, Any, List, Union, Optional
+import logging
+
+from markdownify import markdownify
+from langsmith import traceable
+from tavily import TavilyClient
+from duckduckgo_search import DDGS
+
+from langchain_community.utilities import SearxSearchWrapper
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain.schema import Document
+
+# Add logger for local RAG 
+logger = logging.getLogger(__name__)
+
+def get_config_value(value: Any) -> str:
+    """
+    Convert configuration values to string format, handling both string and enum types.
+    
+    Args:
+        value (Any): The configuration value to process. Can be a string or an Enum.
+    
+    Returns:
+        str: The string representation of the value.
+        
+    Examples:
+        >>> get_config_value("tavily")
+        'tavily'
+        >>> get_config_value(SearchAPI.TAVILY)
+        'tavily'
+    """
+    return value if isinstance(value, str) else value.value
+
+def strip_thinking_tokens(text: str) -> str:
+    """
+    Remove <think> and </think> tags and their content from the text.
+    
+    Iteratively removes all occurrences of content enclosed in thinking tokens.
+    
+    Args:
+        text (str): The text to process
+        
+    Returns:
+        str: The text with thinking tokens and their content removed
+    """
+    while "<think>" in text and "</think>" in text:
+        start = text.find("<think>")
+        end = text.find("</think>") + len("</think>")
+        text = text[:start] + text[end:]
+    return text
+
+def deduplicate_and_format_sources(
+    search_response: Union[Dict[str, Any], List[Dict[str, Any]]], 
+    max_tokens_per_source: int, 
+    fetch_full_page: bool = False
+) -> str:
+    """
+    Format and deduplicate search responses from various search APIs.
+    
+    Takes either a single search response or list of responses from search APIs,
+    deduplicates them by URL, and formats them into a structured string.
+    
+    Args:
+        search_response (Union[Dict[str, Any], List[Dict[str, Any]]]): Either:
+            - A dict with a 'results' key containing a list of search results
+            - A list of dicts, each containing search results
+        max_tokens_per_source (int): Maximum number of tokens to include for each source's content
+        fetch_full_page (bool, optional): Whether to include the full page content. Defaults to False.
+            
+    Returns:
+        str: Formatted string with deduplicated sources
+        
+    Raises:
+        ValueError: If input is neither a dict with 'results' key nor a list of search results
+    """
+    # Convert input to list of results
+    if isinstance(search_response, dict):
+        sources_list = search_response['results']
+    elif isinstance(search_response, list):
+        sources_list = []
+        for response in search_response:
+            if isinstance(response, dict) and 'results' in response:
+                sources_list.extend(response['results'])
+            else:
+                sources_list.extend(response)
+    else:
+        raise ValueError("Input must be either a dict with 'results' or a list of search results")
+    
+    # Deduplicate by URL
+    unique_sources = {}
+    for source in sources_list:
+        if source['url'] not in unique_sources:
+            unique_sources[source['url']] = source
+    
+    # Format output
+    formatted_text = "Sources:\n\n"
+    for i, source in enumerate(unique_sources.values(), 1):
+        formatted_text += f"Source: {source['title']}\n===\n"
+        formatted_text += f"URL: {source['url']}\n===\n"
+        formatted_text += f"Most relevant content from source: {source['content']}\n===\n"
+        if fetch_full_page:
+            # Using rough estimate of 4 characters per token
+            char_limit = max_tokens_per_source * 4
+            # Handle None raw_content
+            raw_content = source.get('raw_content', '')
+            if raw_content is None:
+                raw_content = ''
+                print(f"Warning: No raw_content found for source {source['url']}")
+            if len(raw_content) > char_limit:
+                raw_content = raw_content[:char_limit] + "... [truncated]"
+            formatted_text += f"Full source content limited to {max_tokens_per_source} tokens: {raw_content}\n\n"
+                
+    return formatted_text.strip()
+
+def format_sources(search_results: Dict[str, Any]) -> str:
+    """
+    Format search results into a bullet-point list of sources with URLs.
+    
+    Creates a simple bulleted list of search results with title and URL for each source.
+    
+    Args:
+        search_results (Dict[str, Any]): Search response containing a 'results' key with
+                                        a list of search result objects
+        
+    Returns:
+        str: Formatted string with sources as bullet points in the format "* title : url"
+    """
+    return '\n'.join(
+        f"* {source['title']} : {source['url']}"
+        for source in search_results['results']
+    )
+
+def fetch_raw_content(url: str) -> Optional[str]:
+    """
+    Fetch HTML content from a URL and convert it to markdown format.
+    
+    Uses a 10-second timeout to avoid hanging on slow sites or large pages.
+    
+    Args:
+        url (str): The URL to fetch content from
+        
+    Returns:
+        Optional[str]: The fetched content converted to markdown if successful,
+                      None if any error occurs during fetching or conversion
+    """
+    try:                
+        # Create a client with reasonable timeout
+        with httpx.Client(timeout=10.0) as client:
+            response = client.get(url)
+            response.raise_for_status()
+            return markdownify(response.text)
+    except Exception as e:
+        print(f"Warning: Failed to fetch full page content for {url}: {str(e)}")
+        return None
+
+@traceable
+def duckduckgo_search(query: str, max_results: int = 3, fetch_full_page: bool = False) -> Dict[str, List[Dict[str, Any]]]:
+    """
+    Search the web using DuckDuckGo and return formatted results.
+    
+    Uses the DDGS library to perform web searches through DuckDuckGo.
+    
+    Args:
+        query (str): The search query to execute
+        max_results (int, optional): Maximum number of results to return. Defaults to 3.
+        fetch_full_page (bool, optional): Whether to fetch full page content from result URLs. 
+                                         Defaults to False.
+    Returns:
+        Dict[str, List[Dict[str, Any]]]: Search response containing:
+            - results (list): List of search result dictionaries, each containing:
+                - title (str): Title of the search result
+                - url (str): URL of the search result
+                - content (str): Snippet/summary of the content
+                - raw_content (str or None): Full page content if fetch_full_page is True,
+                                            otherwise same as content
+    """
+    try:
+        with DDGS() as ddgs:
+            results = []
+            search_results = list(ddgs.text(query, max_results=max_results))
+            
+            for r in search_results:
+                url = r.get('href')
+                title = r.get('title')
+                content = r.get('body')
+                
+                if not all([url, title, content]):
+                    print(f"Warning: Incomplete result from DuckDuckGo: {r}")
+                    continue
+
+                raw_content = content
+                if fetch_full_page:
+                    raw_content = fetch_raw_content(url)
+                
+                # Add result to list
+                result = {
+                    "title": title,
+                    "url": url,
+                    "content": content,
+                    "raw_content": raw_content
+                }
+                results.append(result)
+            
+            return {"results": results}
+    except Exception as e:
+        print(f"Error in DuckDuckGo search: {str(e)}")
+        print(f"Full error details: {type(e).__name__}")
+        return {"results": []}
+
+@traceable
+def searxng_search(query: str, max_results: int = 3, fetch_full_page: bool = False) -> Dict[str, List[Dict[str, Any]]]:
+    """
+    Search the web using SearXNG and return formatted results.
+    
+    Uses the SearxSearchWrapper to perform searches through a SearXNG instance.
+    The SearXNG host URL is read from the SEARXNG_URL environment variable
+    or defaults to http://localhost:8888.
+    
+    Args:
+        query (str): The search query to execute
+        max_results (int, optional): Maximum number of results to return. Defaults to 3.
+        fetch_full_page (bool, optional): Whether to fetch full page content from result URLs.
+                                         Defaults to False.
+        
+    Returns:
+        Dict[str, List[Dict[str, Any]]]: Search response containing:
+            - results (list): List of search result dictionaries, each containing:
+                - title (str): Title of the search result
+                - url (str): URL of the search result
+                - content (str): Snippet/summary of the content
+                - raw_content (str or None): Full page content if fetch_full_page is True,
+                                           otherwise same as content
+    """
+    host=os.environ.get("SEARXNG_URL", "http://localhost:8888")
+    s = SearxSearchWrapper(searx_host=host)
+
+    results = []
+    search_results = s.results(query, num_results=max_results)
+    for r in search_results:
+        url = r.get('link')
+        title = r.get('title')
+        content = r.get('snippet')
+        
+        if not all([url, title, content]):
+            print(f"Warning: Incomplete result from SearXNG: {r}")
+            continue
+
+        raw_content = content
+        if fetch_full_page:
+            raw_content = fetch_raw_content(url)
+        
+        # Add result to list
+        result = {
+            "title": title,
+            "url": url,
+            "content": content,
+            "raw_content": raw_content
+        }
+        results.append(result)
+    return {"results": results}
+    
+@traceable
+def tavily_search(query: str, fetch_full_page: bool = True, max_results: int = 3) -> Dict[str, List[Dict[str, Any]]]:
+    """
+    Search the web using the Tavily API and return formatted results.
+    
+    Uses the TavilyClient to perform searches. Tavily API key must be configured
+    in the environment.
+    
+    Args:
+        query (str): The search query to execute
+        fetch_full_page (bool, optional): Whether to include raw content from sources.
+                                         Defaults to True.
+        max_results (int, optional): Maximum number of results to return. Defaults to 3.
+        
+    Returns:
+        Dict[str, List[Dict[str, Any]]]: Search response containing:
+            - results (list): List of search result dictionaries, each containing:
+                - title (str): Title of the search result
+                - url (str): URL of the search result
+                - content (str): Snippet/summary of the content
+                - raw_content (str or None): Full content of the page if available and 
+                                            fetch_full_page is True
+    """
+     
+    tavily_client = TavilyClient()
+    return tavily_client.search(query, 
+                         max_results=max_results, 
+                         include_raw_content=fetch_full_page)
+
+@traceable
+def perplexity_search(query: str, perplexity_search_loop_count: int = 0) -> Dict[str, Any]:
+    """
+    Search the web using the Perplexity API and return formatted results.
+    
+    Uses the Perplexity API to perform searches with the 'sonar-pro' model.
+    Requires a PERPLEXITY_API_KEY environment variable to be set.
+    
+    Args:
+        query (str): The search query to execute
+        perplexity_search_loop_count (int, optional): The loop step for perplexity search
+                                                     (used for source labeling). Defaults to 0.
+  
+    Returns:
+        Dict[str, Any]: Search response containing:
+            - results (list): List of search result dictionaries, each containing:
+                - title (str): Title of the search result (includes search counter)
+                - url (str): URL of the citation source
+                - content (str): Content of the response or reference to main content
+                - raw_content (str or None): Full content for the first source, None for additional
+                                            citation sources
+                                            
+    Raises:
+        requests.exceptions.HTTPError: If the API request fails
+    """
+
+    headers = {
+        "accept": "application/json",
+        "content-type": "application/json",
+        "Authorization": f"Bearer {os.getenv('PERPLEXITY_API_KEY')}"
+    }
+    
+    payload = {
+        "model": "sonar-pro",
+        "messages": [
+            {
+                "role": "system",
+                "content": "Search the web and provide factual information with sources."
+            },
+            {
+                "role": "user",
+                "content": query
+            }
+        ]
+    }
+    
+    response = requests.post(
+        "https://api.perplexity.ai/chat/completions",
+        headers=headers,
+        json=payload
+    )
+    response.raise_for_status()  # Raise exception for bad status codes
+    
+    # Parse the response
+    data = response.json()
+    content = data["choices"][0]["message"]["content"]
+
+    # Perplexity returns a list of citations for a single search result
+    citations = data.get("citations", ["https://perplexity.ai"])
+    
+    # Return first citation with full content, others just as references
+    results = [{
+        "title": f"Perplexity Search {perplexity_search_loop_count + 1}, Source 1",
+        "url": citations[0],
+        "content": content,
+        "raw_content": content
+    }]
+    
+    # Add additional citations without duplicating content
+    for i, citation in enumerate(citations[1:], start=2):
+        results.append({
+            "title": f"Perplexity Search {perplexity_search_loop_count + 1}, Source {i}",
+            "url": citation,
+            "content": "See above for full content",
+            "raw_content": None
+        })
+    
+    return {"results": results}
+
+def query_local_vector_store(query: str, vector_store_paths: List[str], embedding_model: str, limit: int = 5) -> Dict[str, Any]:
+    """
+    Query local vector stores for relevant documents based on a search query.
+    
+    Args:
+        query (str): The search query to use for retrieval
+        vector_store_paths (List[str]): Paths to vector stores to query
+        embedding_model (str): Name of the embedding model to use
+        limit (int, optional): Number of documents to retrieve. Defaults to 5.
+        
+    Returns:
+        Dict[str, Any]: Search results in a format compatible with web search results
+    """
+    try:
+        # Initialize embedding model
+        device = _get_best_available_device()
+        logger.info(f"Using device: {device} for embeddings in local RAG")
+        logger.info(f"Querying with embedding model: {embedding_model}")
+        logger.info(f"Query: {query}")
+        logger.info(f"Vector store paths: {vector_store_paths}")
+        
+        # Try available embedding models in order of preference
+        embedding_models_to_try = [
+            embedding_model,             # First try the specified model
+            "BAAI/bge-m3",               # Then try the model used for preprocessing
+            "sentence-transformers/all-MiniLM-L6-v2",  # Standard fallback
+            "all-MiniLM-L6-v2"           # Simple name fallback
+        ]
+        
+        # Will store successful embeddings
+        embeddings = None
+        
+        # Try each embedding model
+        for model_name in embedding_models_to_try:
+            try:
+                logger.info(f"Trying embedding model: {model_name}")
+                embeddings = HuggingFaceEmbeddings(
+                    model_name=model_name,
+                    model_kwargs={'device': device}
+                )
+                # If we're here, the model loaded successfully
+                logger.info(f"Successfully loaded embedding model: {model_name}")
+                break
+            except Exception as e:
+                logger.warning(f"Failed to load embedding model {model_name}: {str(e)}")
+        
+        if embeddings is None:
+            logger.error("Failed to load any embedding model")
+            return {"results": [], "source": "local_vector_store"}
+        
+        all_docs = []
+        
+        # To avoid "too many open files" error, process batches of vector stores
+        batch_size = 20  # Process 20 vector stores at a time
+        for i in range(0, len(vector_store_paths), batch_size):
+            batch_paths = vector_store_paths[i:i+batch_size]
+            logger.info(f"Processing batch {i//batch_size + 1}/{(len(vector_store_paths) + batch_size - 1)//batch_size} with {len(batch_paths)} vector stores")
+            
+            # Process each vector store in the batch
+            for store_path in batch_paths:
+                if os.path.exists(store_path):
+                    logger.info(f"Querying vector store at: {store_path}")
+                    
+                    # Check vector store structure
+                    chroma_files = os.listdir(store_path)
+                    logger.info(f"Vector store contains files: {chroma_files}")
+                    
+                    # Check for SQLite file which indicates Chroma DB
+                    if 'chroma.sqlite3' in chroma_files:
+                        logger.info("Found SQLite-based Chroma DB format")
+                        
+                        try:
+                            # Try to load the vector store
+                            db = Chroma(
+                                persist_directory=store_path,
+                                embedding_function=embeddings
+                            )
+                            
+                            try:
+                                # First check if the vector store has any documents
+                                try:
+                                    collection_count = db._collection.count()
+                                    logger.info(f"Vector store contains {collection_count} documents")
+                                    
+                                    if collection_count == 0:
+                                        logger.warning(f"Vector store {store_path} is empty")
+                                        if hasattr(db, '_client') and db._client:
+                                            db._client.close()
+                                        continue
+                                except Exception as e:
+                                    logger.warning(f"Could not get document count, will try query anyway: {str(e)}")
+                                
+                                # Try alternative methods if the database looks valid but can't be queried
+                                try:
+                                    # Query for similar documents
+                                    logger.info(f"Searching for similar documents with limit={limit}")
+                                    results = db.similarity_search_with_score(query, k=limit)
+                                    
+                                    logger.info(f"Found {len(results)} similar documents")
+                                    
+                                    # Log a sample of the results
+                                    if results:
+                                        sample_doc, sample_score = results[0]
+                                        logger.info(f"Sample result - Score: {sample_score}")
+                                        logger.info(f"Sample content: {sample_doc.page_content[:100]}...")
+                                        logger.info(f"Sample metadata: {sample_doc.metadata}")
+                                    
+                                    # Add to overall results
+                                    all_docs.extend(results)
+                                    
+                                except Exception as query_err:
+                                    logger.error(f"Error in similarity search: {str(query_err)}")
+                                    
+                                    # Try direct collection access as fallback
+                                    try:
+                                        logger.info("Trying direct collection query as fallback")
+                                        from chromadb.utils import embedding_functions
+                                        
+                                        # Get the collection
+                                        collection = db._collection
+                                        
+                                        # Query directly
+                                        query_results = collection.query(
+                                            query_texts=[query],
+                                            n_results=limit
+                                        )
+                                        
+                                        if query_results and 'documents' in query_results:
+                                            logger.info(f"Direct query returned {len(query_results['documents'][0])} results")
+                                            
+                                            # Create Documents from results
+                                            for i, doc_text in enumerate(query_results['documents'][0]):
+                                                metadata = query_results['metadatas'][0][i] if 'metadatas' in query_results else {}
+                                                score = query_results['distances'][0][i] if 'distances' in query_results else 1.0
+                                                
+                                                doc = Document(page_content=doc_text, metadata=metadata)
+                                                all_docs.append((doc, score))
+                                    except Exception as direct_err:
+                                        logger.error(f"Direct collection query failed: {str(direct_err)}")
+                            finally:
+                                # Close the database connection to prevent file descriptor leaks
+                                if hasattr(db, '_client') and db._client:
+                                    try:
+                                        db._client.close()
+                                        logger.info(f"Closed database connection for {store_path}")
+                                    except Exception as close_err:
+                                        logger.warning(f"Error closing database connection: {str(close_err)}")
+                        
+                        except Exception as e:
+                            logger.error(f"Error loading or querying vector store {store_path}: {str(e)}")
+                            import traceback
+                            logger.error(traceback.format_exc())
+                    else:
+                        logger.warning(f"Directory {store_path} doesn't appear to contain a Chroma database")
+                else:
+                    logger.warning(f"Vector store path not found: {store_path}")
+        
+        logger.info(f"Total documents found across all stores: {len(all_docs)}")
+        
+        if not all_docs:
+            logger.warning("No documents retrieved from any vector store")
+            return {"results": [], "source": "local_vector_store"}
+        
+        # Sort by similarity score (lower is better)
+        all_docs.sort(key=lambda x: x[1])
+        
+        # Take top 'limit' documents
+        top_docs = all_docs[:limit]
+        logger.info(f"Selected top {len(top_docs)} documents")
+        
+        # Format results to match web search format
+        results = []
+        for doc, score in top_docs:
+            # Extract metadata
+            metadata = doc.metadata
+            paper_id = metadata.get('paper_id', 'Unknown')
+            doi = metadata.get('doi', 'Unknown')
+            
+            # Create result structure
+            result = {
+                "title": f"Scientific Paper: {paper_id}",
+                "url": f"https://doi.org/{doi}" if doi != 'Unknown' else "local://source",
+                "content": doc.page_content[:500] + "...",  # Snippet
+                "raw_content": doc.page_content,  # Full content
+                "metadata": metadata,  # Include full metadata
+                "score": score  # Include similarity score for debugging
+            }
+            results.append(result)
+        
+        # Return in format compatible with web search results
+        formatted_results = {
+            "results": results,
+            "source": "local_vector_store"
+        }
+        
+        logger.info(f"Returning {len(results)} formatted results")
+        return formatted_results
+    
+    except Exception as e:
+        logger.error(f"Error in local RAG: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        # Return empty results on error
+        return {"results": [], "source": "local_vector_store"}
+
+def _get_best_available_device() -> str:
+    """Get the best available device (CUDA GPU, MPS, or CPU)"""
+    try:
+        import torch
+        if torch.cuda.is_available():
+            # Use the GPU specified by CUDA_VISIBLE_DEVICES
+            return "cuda"
+        elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+            return "mps"
+        else:
+            return "cpu"
+    except:
+        return "cpu"
+
+def find_volume_paths(base_path: str) -> List[str]:
+    """
+    Find all volume directories (vol_*) in the given base path.
+    
+    Args:
+        base_path (str): Base directory to search in
+        
+    Returns:
+        List[str]: List of full paths to volume directories
+    """
+    # Handle the case where a specific volume is provided
+    if os.path.basename(base_path).startswith("vol_") and os.path.isdir(base_path):
+        logger.info(f"Using specific volume: {base_path}")
+        return [base_path]
+    
+    # Find all vol_* directories
+    volume_pattern = os.path.join(base_path, "vol_*")
+    volumes = glob.glob(volume_pattern)
+    
+    # Filter to only include directories
+    volume_dirs = [vol for vol in volumes if os.path.isdir(vol)]
+    
+    if not volume_dirs:
+        logger.warning(f"No volume directories found in {base_path}")
+        # Return the original path as fallback
+        return [base_path]
+    
+    logger.info(f"Found {len(volume_dirs)} volume directories: {volume_dirs}")
+    return volume_dirs

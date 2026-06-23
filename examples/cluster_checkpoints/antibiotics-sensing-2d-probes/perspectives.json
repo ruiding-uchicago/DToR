@@ -1,0 +1,19 @@
+{
+  "topic": "Which commercially available, cost-effective probe chemistries (e.g., thiolated DNA aptamers, antibody mimetics, conductive MIPs) combined with two-dimensional nanomaterial transducer platforms (e.g., WS\u2082 FETs, graphene field-effect sensors, nanotube-extended gate FETs) deliver the lowest detection limits, minimal batch variability, and robust performance for sensing trace levels of pharmaceutical antibiotics in diverse aqueous waterbody.",
+  "perspectives": [
+    {
+      "id": "5844a65fbcc7c2a2",
+      "perspective": "Systematic Benchmarking of Probe\u2011Chemistry/Nanomaterial Pairings"
+    },
+    {
+      "id": "5c1ebdd93bdb245a",
+      "perspective": "Cost\u2011Effectiveness and Supply\u2011Chain Analysis for Scalable Sensor Production"
+    },
+    {
+      "id": "db3a6ce44bc710c4",
+      "perspective": "Real\u2011World Water Matrix Validation and Robustness Assessment"
+    }
+  ],
+  "timestamp": "2025-11-07T13:18:59.536206",
+  "thread_id": "research_4a664e"
+}

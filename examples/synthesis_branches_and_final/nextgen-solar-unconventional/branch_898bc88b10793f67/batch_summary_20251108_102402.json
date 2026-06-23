@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 1.992777777777778e-06,
+  "reports_generated": [
+    "synthesis_branches_and_final/nextgen-solar-unconventional/branch_898bc88b10793f67/research_topics_NextGen_Solar_Unconventional.txt/final_report_20251108_100756.md"
+  ],
+  "can_resume": false
+}

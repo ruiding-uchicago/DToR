@@ -1,0 +1,19 @@
+{
+  "topic": "Which two-dimensional material platforms (e.g., graphene derivatives, transition metal dichalcogenides, MXenes), molecular recognition elements (e.g., molecularly imprinted polymers, aptamers, peptide receptors), and device integration strategies (e.g., FET, electrochemical impedance, photonic transduction) have demonstrated the highest sensitivity, selectivity against organic matter and ionic interferents, and rapid response times for detecting micro- and nanoplastic particles in complex water matrices? Think of novel candidates.",
+  "perspectives": [
+    {
+      "id": "fe0c004cb119d39a",
+      "perspective": "Hybrid MXene\u2011Graphene FET with Aptamer\u2011Based Recognition for Ultra\u2011Fast Nanoplastic Sensing"
+    },
+    {
+      "id": "d0866fd8ffdc3d63",
+      "perspective": "2D Transition\u2011Metal Dichalcogenide (MoS\u2082) Photonic Crystal Waveguide Integrated with Molecularly Imprinted Polymer for Label\u2011Free Optical Detection"
+    },
+    {
+      "id": "a2dd26b4faf32ea6",
+      "perspective": "Microfluidic Electrochemical Impedance Spectroscopy (EIS) Platform Using Zwitterionic\u2011Coated MXene Nanosheets and Peptide Receptors"
+    }
+  ],
+  "timestamp": "2025-11-07T13:17:05.548615",
+  "thread_id": "research_11529a"
+}

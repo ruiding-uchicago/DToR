@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 1.6141666666666667e-06,
+  "reports_generated": [
+    "synthesis_branches_and_final/mixed-dimensional-low-noise-transducers/branch_aebbd345f75b5a3c/research_topics_Mixed_Dimensional_Low_Noise_Transducers.txt/final_report_20251108_095141.md"
+  ],
+  "can_resume": false
+}

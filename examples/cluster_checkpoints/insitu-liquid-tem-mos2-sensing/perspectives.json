@@ -1,0 +1,19 @@
+{
+  "topic": "How can in situ liquid cell TEM be employed to directly visualize the real-time adsorption and structural changes of 2D MoS\u2082 nanosheets used in aqueous FET sensors during analyte binding? What fluid cell configurations and electron dose parameters are necessary to preserve native water\u2013material interfaces while capturing high-resolution sensing events without beam-induced artifacts?",
+  "perspectives": [
+    {
+      "id": "b198468ed81ad39d",
+      "perspective": "Ultra-low-dose, high-speed liquid-cell STEM imaging of MoS2\u2013analyte interactions"
+    },
+    {
+      "id": "048ba9a7ec3bb39c",
+      "perspective": "Electrochemical gating-integrated liquid-cell TEM for correlating adsorption with aqueous FET response"
+    },
+    {
+      "id": "f34e509a8ff06b82",
+      "perspective": "Computational\u2013experimental data-integration framework for artifact mitigation and interpretation"
+    }
+  ],
+  "timestamp": "2025-11-07T13:20:35.523688",
+  "thread_id": "research_600f58"
+}

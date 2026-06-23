@@ -1,0 +1,19 @@
+{
+  "topic": "Which tribo/piezo-powered, skin-conformal platforms (CNT/graphene networks, ionic gels) sustain continuous metabolite/ion monitoring without batteries\u2014what power densities and duty-cycled readouts are practical for week-scale operation?",
+  "perspectives": [
+    {
+      "id": "eb001d61be195fcb",
+      "perspective": "Materials\u2011Centric Energy Harvesting & Storage in Stretchable Conductors"
+    },
+    {
+      "id": "c7bfe3e4635f2c79",
+      "perspective": "System\u2011Level Duty\u2011Cycle Optimization for Battery\u2011Free Metabolite Sensing"
+    },
+    {
+      "id": "7b86eb774d6e161f",
+      "perspective": "Clinical Validation & Use\u2011Case Scenarios for Continuous Metabolite/Ion Monitoring"
+    }
+  ],
+  "timestamp": "2025-11-07T13:15:27.605315",
+  "thread_id": "research_02f0f4"
+}
