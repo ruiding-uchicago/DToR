@@ -1070,6 +1070,10 @@ def synthesize_branch(state: DToRState, config: RunnableConfig):
     updated_branches = state.branches.copy()
     branch_update = updated_branches[state.active_branch_id]
     branch_update.branch_summary = branch_summary
+    # A synthesised branch is finished. Without this, route_next_action treats a
+    # summarised branch as complete (lenient) while synthesize_final_report
+    # requires is_complete (strict) -- the run then ends with no final report.
+    branch_update.is_complete = True
     updated_branches[state.active_branch_id] = branch_update
     
     # Add formatted sources to the global sources list
@@ -1253,11 +1257,31 @@ def synthesize_final_report(state: DToRState, config: RunnableConfig):
     
     return {
         "final_summary": final_summary,
+        "branch_summaries": branch_summaries,  # surfaced so callers get per-branch detail
         "is_complete": True
     }
 
+# --- Branch actionability -------------------------------------------------
+
+def _branch_has_actionable_work(branch) -> bool:
+    """True if this branch can still make progress on its own.
+
+    Used by both the router and select_next_branch so they agree on when a
+    branch is stuck; disagreeing is what used to deadlock the graph.
+    """
+    if branch.is_complete:
+        return False
+    if any(getattr(n, "processing_status", None) == "pending" for n in branch.research_nodes):
+        return True
+    if branch.remaining_budget > 0 and any(
+        getattr(n, "processing_status", None) == "completed" for n in branch.research_nodes
+    ):
+        return True
+    return False
+
+
 # 6. Branch Monitor & Tree Controller
-def route_next_action(state: DToRState, config: RunnableConfig) -> Literal["diversify_query", "analyze_research", "generate_queries", "synthesize_branch", "synthesize_final", END]:
+def route_next_action(state: DToRState, config: RunnableConfig) -> Literal["diversify_query", "analyze_research", "generate_queries", "research_node", "select_next_branch", "synthesize_branch", "synthesize_final", END]:
     """
     Determines the next action in the Deep Tree of Research flow based on current state.
     Controls overall tree growth and branch progression.
@@ -1347,10 +1371,23 @@ def route_next_action(state: DToRState, config: RunnableConfig) -> Literal["dive
                  action_for_next_branch = "analyze_research"
                  # Continue searching in case another branch has pending nodes (higher priority)
 
-    # If we found an actionable branch, set it active and return the action
+    # If we found an actionable branch, hand off to select_next_branch.
+    #
+    # A conditional edge only consumes this function's RETURN VALUE; any state
+    # mutation made here is discarded by LangGraph. Assigning
+    # state.active_branch_id and returning the action directly therefore sent
+    # the action to the *old* branch, which had nothing to do -> the router
+    # looped until GraphRecursionError. select_next_branch is a real node, so
+    # the switch it performs is persisted.
     if next_actionable_branch_id and action_for_next_branch:
-        state.active_branch_id = next_actionable_branch_id
-        routing_logger.info(f"Routing to '{action_for_next_branch}' for branch {state.branches[next_actionable_branch_id].perspective}")
+        target = state.branches[next_actionable_branch_id]
+        if next_actionable_branch_id != state.active_branch_id:
+            routing_logger.info(
+                f"Next actionable branch is {target.perspective} "
+                f"(want '{action_for_next_branch}'); routing via select_next_branch to persist the switch."
+            )
+            return "select_next_branch"
+        routing_logger.info(f"Routing to '{action_for_next_branch}' for branch {target.perspective}")
         return action_for_next_branch
 
     # If no actionable work found in any incomplete branch, check for synthesis needs
@@ -1444,20 +1481,28 @@ def select_next_branch(state: DToRState, config: RunnableConfig):
             # Return None to signal completion
             return {"active_branch_id": None, "is_complete": True}
 
-    # If current branch is still active and not complete, keep it
-    if (state.active_branch_id and
-        state.active_branch_id in state.branches and
-        not state.branches[state.active_branch_id].is_complete):
-        routing_logger.info(f"Keeping current active branch: {state.branches[state.active_branch_id].perspective}")
+    # Keep the current branch only while it can still make progress. Staying on
+    # a branch that is out of budget and out of pending nodes starves the
+    # branches that still have work.
+    current = state.branches.get(state.active_branch_id) if state.active_branch_id else None
+    if current is not None and _branch_has_actionable_work(current):
+        routing_logger.info(f"Keeping current active branch: {current.perspective}")
         return {}
 
-    # Find the first incomplete branch
+    # Prefer a branch with actionable work; fall back to any incomplete branch
+    # (one that merely needs synthesis).
     next_branch_id = None
     for branch_id, branch in state.branches.items():
-        if not branch.is_complete:
+        if _branch_has_actionable_work(branch):
             next_branch_id = branch_id
-            routing_logger.info(f"Selected next branch: {branch_id} - {branch.perspective}")
+            routing_logger.info(f"Selected next actionable branch: {branch_id} - {branch.perspective}")
             break
+    if next_branch_id is None:
+        for branch_id, branch in state.branches.items():
+            if not branch.is_complete:
+                next_branch_id = branch_id
+                routing_logger.info(f"Selected next incomplete branch (needs synthesis): {branch_id} - {branch.perspective}")
+                break
 
     if next_branch_id:
         routing_logger.info(f"Moving to next branch: {state.branches[next_branch_id].perspective}")

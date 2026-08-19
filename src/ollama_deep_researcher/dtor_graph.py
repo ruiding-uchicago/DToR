@@ -186,6 +186,7 @@ def build_dtor_graph(checkpointer: Optional[object] = None):
         "analyze_research": "analyze_research",
         "generate_queries": "generate_queries",
         "research_node": "research_node",
+        "select_next_branch": "select_next_branch",  # router uses this to persist a branch switch
         "synthesize_branch": "synthesize_branch",
         "synthesize_final": "synthesize_final",
         END: END
