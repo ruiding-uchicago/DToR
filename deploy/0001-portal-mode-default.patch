@@ -1,0 +1,30 @@
+Subject: [PATCH] chainlit: let RESEARCH_MODE decide the default research mode
+
+Chainlit derives the mode purely from the message text, which silently
+overrides RESEARCH_MODE. Verified on unpatched source with RESEARCH_MODE=dtor:
+parse_user_input("PFAS sensing with 2D materials") returns mode='single',
+so every portal request would run single-path and never branch.
+
+After this patch RESEARCH_MODE is the default; typing 'dtor'/'deep tree'
+or 'single' still overrides per request.
+
+diff --git a/src/ollama_deep_researcher/chainlit_app.py b/src/ollama_deep_researcher/chainlit_app.py
+index 505fec1..70b06ea 100644
+--- a/src/ollama_deep_researcher/chainlit_app.py
++++ b/src/ollama_deep_researcher/chainlit_app.py
+@@ -165,7 +165,14 @@ def should_skip_node(node_name: str, actual_node_name: str) -> bool:
+ def parse_user_input(user_input: str) -> tuple[str, str]:
+     """Parse user input to extract research topic and mode."""
+     user_input = user_input.strip()
+-    mode = "dtor" if any(keyword in user_input.lower() for keyword in ["dtor", "deep tree"]) else "single"
++    lowered = user_input.lower()
++    if any(k in lowered for k in ["dtor", "deep tree"]):
++        mode = "dtor"
++    elif "single" in lowered:
++        mode = "single"
++    else:
++        # Portal deploy: RESEARCH_MODE is the default when the text says nothing.
++        mode = os.getenv("RESEARCH_MODE", "single")
+ 
+     # Extract research topic by removing mode keywords
+     research_topic = user_input

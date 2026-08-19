@@ -1,0 +1,23 @@
+# DToR — API-only profile (OpenAI backend, local RAG disabled).
+# Verified 2026-08-18 on Python 3.12: fresh venv from this file imports the app,
+# runs a full DToR graph end-to-end, boots Chainlit, and ships traces to Phoenix.
+# Resulting venv ~331 MB. No torch / chromadb / sentence-transformers / transformers.
+#
+# The Phoenix SERVER is deliberately NOT here (it is ~780 MB and pulls pandas).
+# Only the OTel client is needed in-process; run the server separately.
+
+langgraph==0.3.21
+langchain-core==0.3.86
+langchain==0.3.30
+langchain-community==0.3.20        # dead imports in utils.py; ~92 MB, no torch
+langchain-openai==0.3.11           # dead import in lmstudio.py
+langchain-ollama==0.3.8            # dead import in dtor_nodes.py (0 MB, core only)
+openai==1.109.1
+tavily-python==0.7.27
+ddgs==9.15.0
+markdownify==1.2.3
+httpx==0.28.1
+requests==2.34.2
+chainlit==2.11.1
+arize-phoenix-otel==0.17.1
+openinference-instrumentation-langchain==0.1.70
