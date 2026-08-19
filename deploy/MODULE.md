@@ -19,6 +19,30 @@ print(result.elapsed_seconds)
 `run_research` returns a `ResearchResult` and raises `ValueError` on bad
 arguments or `DToRError` when the graph finishes without a report.
 
+## Progress reporting
+
+A run takes 10-30 minutes, so pass `on_progress` to show the user what is
+happening instead of a spinner:
+
+```python
+def report(event):
+    # push to a websocket, write to Redis, update a DB row, ...
+    print(event)                     # "[ 142.7s] branch 1/3 - searching the web"
+    print(event.stage,               # "web_research" (raw node name)
+          event.branches_completed,  # 1
+          event.branches_total,      # 3
+          event.research_nodes_done, # 4
+          event.elapsed_seconds)     # 142.7
+
+run_research(topic, on_progress=report, ...)
+```
+
+The callback fires as each graph node finishes — roughly 45-90 times per dtor
+run. Exceptions raised inside it are swallowed, so a broken progress sink can
+never fail the research job. `event.stage` is the raw LangGraph node name and
+is the stable field to switch on; `event.label` is prose for humans and may be
+reworded.
+
 ## Arguments
 
 | Argument | Default | Meaning |
@@ -38,6 +62,7 @@ arguments or `DToRError` when the graph finishes without a report.
 | `extra_env` | — | escape hatch for settings without a named argument |
 | `recursion_limit` | 300 | LangGraph step ceiling |
 | `thread_id` | derived from topic | checkpoint identity |
+| `on_progress` | — | callback invoked with a `ProgressEvent` per completed node |
 
 Any argument left as `None` falls back to its environment variable, then to
 the default above.
@@ -68,6 +93,7 @@ deliberately omits.
 
 - **Blocking and sequential.** One dtor run is ~200 LLM calls over 10-30 minutes
   in the calling thread. Run it in a worker/queue, not in a request handler.
+  `on_progress` is the hook for feeding a status endpoint while it runs.
 - **Per-call settings, no global state.** Configuration is applied to
   `os.environ` for the duration of the call and restored afterwards, because
   `Configuration` reads the environment and lets it win over the config dict.

@@ -19,13 +19,55 @@ import os
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
-__all__ = ["ResearchResult", "run_research", "DToRError"]
+__all__ = ["ResearchResult", "ProgressEvent", "run_research", "DToRError"]
 
 
 class DToRError(RuntimeError):
     """Raised when a research run cannot produce a report."""
+
+
+# Node name -> human-readable step. Keys are LangGraph node names; anything not
+# listed is reported with its raw name so new nodes still surface.
+_STAGE_LABELS = {
+    "init_session": "starting session",
+    "diversify_query": "generating research perspectives",
+    "select_next_branch": "selecting next branch",
+    "research_node": "researching branch",
+    "generate_query": "writing search query",
+    "local_rag_research": "querying local knowledge",
+    "summarize_local_rag_results": "summarising local knowledge",
+    "generate_complementary_query": "writing complementary query",
+    "web_research": "searching the web",
+    "complementary_web_research": "searching the web (complementary)",
+    "summarize_sources": "summarising sources",
+    "reflect_on_summary": "reflecting on findings",
+    "finalize_summary": "finalising node report",
+    "analyze_research": "deciding whether to expand",
+    "generate_queries": "turning gaps into follow-ups",
+    "synthesize_branch": "synthesising branch",
+    "synthesize_final": "writing final report",
+    "single_path": "running single-path research",
+}
+
+
+@dataclass
+class ProgressEvent:
+    """One step of a running job, handed to the ``on_progress`` callback."""
+
+    stage: str                      # raw node name, e.g. "synthesize_branch"
+    label: str                      # human-readable, e.g. "synthesising branch"
+    elapsed_seconds: float
+    branches_completed: int = 0     # branches synthesised so far (dtor)
+    branches_total: Optional[int] = None
+    research_nodes_done: int = 0    # research nodes finished across all branches
+
+    def __str__(self) -> str:
+        if self.branches_total:
+            return (f"[{self.elapsed_seconds:6.1f}s] "
+                    f"branch {self.branches_completed}/{self.branches_total} - {self.label}")
+        return f"[{self.elapsed_seconds:6.1f}s] {self.label}"
 
 
 @dataclass
@@ -96,6 +138,7 @@ def run_research(
     extra_env: Optional[Dict[str, str]] = None,
     recursion_limit: int = 300,
     thread_id: Optional[str] = None,
+    on_progress: Optional[Callable[["ProgressEvent"], None]] = None,
 ) -> ResearchResult:
     """Run one research job and return the finished report.
 
@@ -117,6 +160,10 @@ def run_research(
             {"ENABLE_PAPER_RETRIEVAL": "true", "PAPER_VECTOR_PATH": "/data/vs"}.
         recursion_limit: LangGraph step ceiling for one run.
         thread_id: Checkpoint identity. Derived from the topic when omitted.
+        on_progress: Called with a ProgressEvent as each node finishes, so a
+            caller can show progress during the 10-30 minutes a run takes.
+            Exceptions raised by the callback are swallowed, never failing the
+            research run.
 
     Returns:
         ResearchResult with the report and, in dtor mode, per-branch summaries.
@@ -185,11 +232,18 @@ def run_research(
         from ollama_deep_researcher.dtor_state import DToRStateInput
 
         graph = create_main_graph()
-        raw = graph.invoke(
-            DToRStateInput(research_topic=topic, mode=mode),
-            config={"configurable": {"thread_id": tid},
-                    "recursion_limit": recursion_limit},
-        )
+        run_config = {"configurable": {"thread_id": tid},
+                      "recursion_limit": recursion_limit}
+        state_in = DToRStateInput(research_topic=topic, mode=mode)
+
+        if on_progress is None:
+            raw = graph.invoke(state_in, config=run_config)
+        else:
+            raw = _invoke_with_progress(
+                graph, state_in, run_config, on_progress,
+                started=started,
+                branches_total=int(env["MAX_BRANCHES"]) if mode == "dtor" else None,
+            )
 
     report = (raw or {}).get("final_summary", "") or ""
     if not report:
@@ -210,3 +264,51 @@ def run_research(
         sources=sources,
         elapsed_seconds=round(time.time() - started, 1),
     )
+
+
+def _invoke_with_progress(graph, state_in, run_config, on_progress, *,
+                          started: float, branches_total: Optional[int]) -> Dict[str, Any]:
+    """Drive the graph with streaming updates so progress can be reported.
+
+    Returns the same payload ``graph.invoke`` would: LangGraph filters node
+    updates through the graph's output schema, so the run's final values are
+    accumulated from the updates rather than read from a single event.
+    """
+    accumulated: Dict[str, Any] = {}
+    branches_completed = 0
+    research_nodes: set = set()
+
+    def emit(stage: str) -> None:
+        event = ProgressEvent(
+            stage=stage,
+            label=_STAGE_LABELS.get(stage, stage.replace("_", " ")),
+            elapsed_seconds=round(time.time() - started, 1),
+            branches_completed=branches_completed,
+            branches_total=branches_total,
+            research_nodes_done=len(research_nodes),
+        )
+        try:
+            on_progress(event)
+        except Exception:  # a broken callback must not abort the research run
+            pass
+
+    for namespace, update in graph.stream(
+        state_in, config=run_config, stream_mode="updates", subgraphs=True
+    ):
+        if not isinstance(update, dict):
+            continue
+        # Namespaces look like ('dtor_mode:<uuid>', 'research_node:<uuid>');
+        # the second entry identifies one execution of the research subgraph.
+        for entry in namespace or ():
+            if isinstance(entry, str) and entry.startswith("research_node:"):
+                research_nodes.add(entry)
+        for node, payload in update.items():
+            if node == "synthesize_branch":
+                branches_completed += 1
+            if isinstance(payload, dict):
+                for key in ("final_summary", "branch_summaries", "all_sources"):
+                    if payload.get(key):
+                        accumulated[key] = payload[key]
+            emit(node)
+
+    return accumulated
