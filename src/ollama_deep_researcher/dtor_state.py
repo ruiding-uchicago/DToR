@@ -56,3 +56,4 @@ class DToRStateOutput(TypedDict, total=False):
     """Output for the Deep Tree of Research system."""
     final_summary: str  # Final synthesized report
     all_sources: List[str]  # All sources from all branches
+    branch_summaries: Dict[str, str]  # perspective -> branch synthesis (dtor mode)

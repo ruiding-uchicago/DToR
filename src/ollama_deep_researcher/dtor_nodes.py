@@ -1257,6 +1257,7 @@ def synthesize_final_report(state: DToRState, config: RunnableConfig):
     
     return {
         "final_summary": final_summary,
+        "branch_summaries": branch_summaries,  # surfaced so callers get per-branch detail
         "is_complete": True
     }
 
