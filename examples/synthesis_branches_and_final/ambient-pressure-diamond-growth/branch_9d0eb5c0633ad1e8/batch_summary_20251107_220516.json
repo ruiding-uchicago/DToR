@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 0.2959021383333333,
+  "reports_generated": [
+    "synthesis_branches_and_final/ambient-pressure-diamond-growth/branch_9d0eb5c0633ad1e8/research_topics_Ambient_Pressure_Diamond_Growth.txt/final_report_20251107_220516.md"
+  ],
+  "can_resume": false
+}

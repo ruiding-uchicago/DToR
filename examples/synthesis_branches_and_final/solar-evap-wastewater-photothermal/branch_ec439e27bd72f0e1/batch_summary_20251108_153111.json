@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 0.578185635,
+  "reports_generated": [
+    "synthesis_branches_and_final/solar-evap-wastewater-photothermal/branch_ec439e27bd72f0e1/research_topics_Solar_Evap_Wastewater_Photothermal.txt/final_report_20251108_153111.md"
+  ],
+  "can_resume": false
+}

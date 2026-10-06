@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 1.5288888888888889e-06,
+  "reports_generated": [
+    "synthesis_branches_and_final/batteryless-stretchable-biosensors/branch_7b86eb774d6e161f/research_topics_Batteryless_Stretchable_Biosensors.txt/final_report_20251108_002517.md"
+  ],
+  "can_resume": false
+}

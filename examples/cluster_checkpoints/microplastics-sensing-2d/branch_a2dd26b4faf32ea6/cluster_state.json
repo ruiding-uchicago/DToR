@@ -1,0 +1,25 @@
+{
+  "tasks": [
+    {
+      "topic": "research_topics/Microplastics_Sensing_2D.txt",
+      "status": "completed",
+      "thread_id": "research_research_topics_Microplastics_Sensing_2D.txt_d4e0c6",
+      "start_time": "2025-11-08T08:35:58.921242",
+      "end_time": "2025-11-08T08:59:47.670803",
+      "checkpoint_file": "cluster_checkpoints/microplastics-sensing-2d/branch_a2dd26b4faf32ea6/research_research_topics_Microplastics_Sensing_2D.txt_d4e0c6.sqlite",
+      "final_report_path": "synthesis_branches_and_final/microplastics-sensing-2d/branch_a2dd26b4faf32ea6/research_topics_Microplastics_Sensing_2D.txt/final_report_20251108_085947.md",
+      "error_message": null,
+      "last_event_count": 1,
+      "tot_branches_completed": 0,
+      "tot_current_branch": null,
+      "tot_current_depth": 0,
+      "tot_nodes_explored": 0,
+      "last_node_type": "tot_mode"
+    }
+  ],
+  "current_task_index": 0,
+  "last_save": "2025-11-08T09:19:00.462733",
+  "wall_time_hours": 4.0,
+  "checkpoint_dir": "cluster_checkpoints/microplastics-sensing-2d/branch_a2dd26b4faf32ea6",
+  "output_dir": "synthesis_branches_and_final/microplastics-sensing-2d/branch_a2dd26b4faf32ea6"
+}

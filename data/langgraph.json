@@ -1,0 +1,13 @@
+{
+    "dockerfile_lines": [],
+    "graphs": {
+      "ollama_deep_researcher": "./src/ollama_deep_researcher/graph.py:graph",
+      "deep_researcher_dtor": "./src/ollama_deep_researcher/dtor_graph.py:graph",
+      "code_improvement_researcher": "./src/ollama_deep_researcher/code_improvement_graph.py:code_improvement_graph"
+    },
+    "python_version": "3.11",
+    "env": "./.env",
+    "dependencies": [
+      "."
+    ]
+  }

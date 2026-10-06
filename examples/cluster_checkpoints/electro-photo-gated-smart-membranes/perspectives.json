@@ -1,0 +1,19 @@
+{
+  "topic": "Which electrically gated or photo-responsive nanochannels (MXene/COF/polymer hybrids) deliver on-demand selectivity and anti-fouling for ion separations and resource recovery in wastewater, and what gating \"on/off\" ratios and cycling lifetimes are state-of-the-art?",
+  "perspectives": [
+    {
+      "id": "105af9c840eb701d",
+      "perspective": "Programmable selectivity and anti-fouling via hybrid MXene/COF/polymer nanochannels"
+    },
+    {
+      "id": "bfa7609ee1d9b97a",
+      "perspective": "Real-world deployment: system integration, durability, and lifecycle performance in wastewater"
+    },
+    {
+      "id": "d4a80f593a77c11b",
+      "perspective": "Modeling, data-driven design, and high-throughput discovery for gating performance"
+    }
+  ],
+  "timestamp": "2025-11-07T13:20:23.046827",
+  "thread_id": "research_9ae6c0"
+}

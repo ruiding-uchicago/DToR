@@ -1,0 +1,29 @@
+# Branch Synthesis: Computational discovery and supramolecular design for PFAS probes on FETs\n## Branch ID: 7f00c0bcc8ab9ab7\n## Depth: 3\n\nA. Consolidated Insights (6 bullets)
+- β-CD–MIP as leading probe for PFAS-on-FETs: A thin β-cyclodextrin–based molecularly imprinted polymer film deployed at the FET gate/interface is the most consistently supported probe in the summaries, combining robust PFAS host–guest recognition with imprinting-driven selectivity and antifouling traits, and is readily compatible with transducer surfaces.
+- Computational design as a gatekeeper: Docking and binding-energy screening plus dielectric/transduction modeling are central to tailoring β-CD derivatives, crosslink density, imprint topology, and film parameters to optimize gate modulation (dielectric perturbation, capacitance changes) for PFAS like PFOA/PFOS.
+- Real-water performance evidence guiding expectations: Non-FET β-CD–MIP platforms demonstrate ppt-to-ng/L sensitivity and anti-fouling behavior in real water (e.g., LODs around 8–10 ng/L with dynamic ranges ~17–5000 ng/L), providing a credible performance target for translating to FET-based sensors, while noting that a fully integrated β-CD–MIP PFAS-FET with real-water validation has not yet been published.
+- Gaps and critical next steps: Key missing pieces include (i) experimentally demonstrated β-CD–MIP PFAS-FET devices with real-water calibration and full performance metrics (LOD, dynamic range, response time, selectivity, stability, reproducibility), (ii) concrete deposition/grafting protocols to form ultrathin, uniform β-CD–MIP films on gate dielectrics, and (iii) systematic evaluation of matrix effects (hardness/Ca2+, NOM, chlorination byproducts) on binding and transduction.
+- Alternatives and maturity contrasts: Cyclodextrin polymers, porous β-CD networks, and CD-imprinted films inform recognition motifs and antifouling potential, while aptamer-based PFAS probes are promising in principle but lack mature FET demonstrations within the provided dataset; thus aptamers remain a future track rather than a mature platform in this dataset.
+- Integrated design trajectory: The strongest, most mature pathway combines computational discovery (receptor derivatives and imprint/topology optimization) with thin-film grafting onto FET gates, followed by real-water validation and scalable integration, forming a disciplined loop from molecular design to device-level performance.
+
+B. Divergent Claims
+- Claim 1: β-CD–MIP thin films on FET gates are the best-proven route for PFAS detection in water, given antifouling real-water performance and clear transduction potential.
+  - Counter-claim: While β-CD–MIP is the best-supported candidate in the iterations, there is no published fully integrated β-CD–MIP PFAS-FET with real-water performance metrics yet; maturation hinges on demonstrated device-level transduction and standardized real-water metrics.
+- Claim 2: Real-water non-FET β-CD–MIP demonstrations (ppt–ng/L LODs) imply strong transduction viability for FETs.
+  - Counter-claim: Those demonstrations are electrochemical/adsorptive platforms; translating binding events into gate-channel signals on an actual FET (and under Debye screening in real water) is nontrivial and requires explicit device-level validation, robust antifouling on the gate, and deposition protocol standardization.
+- Claim 3: Aptamer-based PFAS probes are promising but not mature for FET integration in the current dataset.
+  - Counter-claim: Aptamer-based recognition could yield fast kinetics and high specificity; with targeted design and robust transduction schemes, aptamers could become competitive on FETs, but presently β-CD–MIP has more mature evidence within this dataset.
+
+C. Notable Gaps
+- Real-water PFAS-FET demonstrations: No published β-CD–MIP PFAS-FET with complete real-water performance metrics (LOD, dynamic range, response time, selectivity, stability, reproducibility).
+- Deposition and interfacing protocols: No standardized, CMOS-compatible deposition/grafting protocol for ultrathin β-CD–MIP films on gate dielectrics with proven long-term stability.
+- Matrix-effect quantification: Systematic, quantitative assessment of hardness (Ca2+), NOM, chlorination byproducts, and PFAS mixtures on binding and transduction remains absent; antifouling efficacy in real-water FET contexts is not yet demonstrated.
+
+D. Confidence
+- Confidence: Medium. The body of work strongly supports β-CD–MIP as the leading probe class and highlights computational design as essential, plus real-water non-FET demonstrations as compelling benchmarks. However, the absence of published fully integrated β-CD–MIP PFAS-FET devices with real-water performance metrics means the practical realization remains to be experimentally validated and standardized.
+
+E. Notable Candidates (distinct materials, probes, or techniques surfaced)
+β-CD–MIP, β-CD–MB MIP, cyclodextrin polymers (CDPs), porous β-CD networks, amine-functionalized CD networks, aptamer PFAS probes, PFOS, PFOA, PFHxS, PFNA, PFBS, PFHpA, docking, binding-energy screening, dielectric modeling, gate/interface layers, real water compatibility, antifouling, thin films, FETs (organic or silicon/oxide-based)
+
+Notes
+- Numeric anchors appearing in the source materials that are relevant to this synthesis include: 7 PFAS core representatives (PFOS, PFOA, PFHxS, PFNA, PFBA, PFHpA, PFBS); real-water LODs reported for β-CD–MIP platforms in the non-FET context (e.g., LOD ~8.6 ng/L; dynamic range ~17–5000 ng/L); response motifs like antifouling behavior; Debye-length extension targets of roughly 5–10 nm for PEM-informed approaches; β-CD–MIP thin films envisioned at nanometer-scale thicknesses (nanometer to tens of nanometers). Additionally, SGNN-based design claims in related approaches cite accuracy ≈0.89 for sensor performance predictions.

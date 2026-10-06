@@ -1,0 +1,25 @@
+{
+  "tasks": [
+    {
+      "topic": "research_topics/PFAS_2D_FET_Probes.txt",
+      "status": "completed",
+      "thread_id": "research_research_topics_PFAS_2D_FET_Probes.txt_8cd510",
+      "start_time": "2025-11-08T14:10:49.597540",
+      "end_time": "2025-11-08T14:46:29.858021",
+      "checkpoint_file": "cluster_checkpoints/pfas-2d-fet-probes/branch_490fba8775e3572f/research_research_topics_PFAS_2D_FET_Probes.txt_8cd510.sqlite",
+      "final_report_path": "synthesis_branches_and_final/pfas-2d-fet-probes/branch_490fba8775e3572f/research_topics_PFAS_2D_FET_Probes.txt/final_report_20251108_144629.md",
+      "error_message": null,
+      "last_event_count": 1,
+      "tot_branches_completed": 0,
+      "tot_current_branch": null,
+      "tot_current_depth": 0,
+      "tot_nodes_explored": 0,
+      "last_node_type": "tot_mode"
+    }
+  ],
+  "current_task_index": 0,
+  "last_save": "2025-11-08T15:04:50.885962",
+  "wall_time_hours": 4.0,
+  "checkpoint_dir": "cluster_checkpoints/pfas-2d-fet-probes/branch_490fba8775e3572f",
+  "output_dir": "synthesis_branches_and_final/pfas-2d-fet-probes/branch_490fba8775e3572f"
+}

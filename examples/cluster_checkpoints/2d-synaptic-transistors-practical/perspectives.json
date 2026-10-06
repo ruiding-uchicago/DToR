@@ -1,0 +1,19 @@
+{
+  "topic": "Which two-dimensional material platforms (e.g., MoS\u2082, WSe\u2082, black phosphorus, h-BN), device architectures (e.g., floating-gate, ionic-gated, dual-gate), and fabrication protocols (e.g., channel thickness control, dielectric engineering, contact metallurgy) have been shown to optimize synaptic transistor performance\u2014specifically in terms of energy per event, weight-update linearity, retention time, and cycling endurance\u2014for neuromorphic sensing applications? Think of most practical and promising candidates.",
+  "perspectives": [
+    {
+      "id": "f5022d76baf990ca",
+      "perspective": "Ionic-gated 2D synaptic transistors: energy-efficient gating with dual-gate control"
+    },
+    {
+      "id": "1c350f6c99ed3c84",
+      "perspective": "Floating-gate and ferroelectric-gate 2D transistors for nonvolatile, high-endurance synaptic weights"
+    },
+    {
+      "id": "459255dc45c8ebc3",
+      "perspective": "2D heterostructure engineering and fabrication protocol optimization for robust synaptic transistors"
+    }
+  ],
+  "timestamp": "2025-11-07T13:20:20.659256",
+  "thread_id": "research_7b72d1"
+}

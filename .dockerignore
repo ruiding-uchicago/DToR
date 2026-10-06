@@ -1,0 +1,52 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs and outputs
+logs/
+output/
+checkpoints/
+cluster_checkpoints/
+Local_DToR_DR_Reports_Collection/
+synthesis_branches_and_final/
+
+# Documentation
+docs/
+
+# Test files
+tests/
+*.test.py
+
+# Other
+.DS_Store
+*.log
+.env
+.env.local
+.env.*.local
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore

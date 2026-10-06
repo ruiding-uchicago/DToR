@@ -1,0 +1,1 @@
+Which mixed-material (e.g., graphene/2D) multi-sensor arrays with on-chip QA/QC and pattern-recognition deliver robust mixture fingerprinting (metals + microbes + organics) in flowing water, with automated drift/fault handling for field deployment?

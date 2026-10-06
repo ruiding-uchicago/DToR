@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 1.8441666666666667e-06,
+  "reports_generated": [
+    "synthesis_branches_and_final/co2rr-sota-and-emerging-cats/branch_5b6c23de1247c92e/research_topics_CO2RR_SOTA_and_Emerging_Cats.txt/final_report_20251108_012731.md"
+  ],
+  "can_resume": false
+}

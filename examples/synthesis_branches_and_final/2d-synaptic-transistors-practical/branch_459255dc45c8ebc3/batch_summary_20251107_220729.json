@@ -1,0 +1,10 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 1.9794444444444445e-06,
+  "reports_generated": [],
+  "can_resume": false
+}

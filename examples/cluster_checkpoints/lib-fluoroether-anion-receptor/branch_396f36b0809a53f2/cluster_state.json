@@ -1,0 +1,25 @@
+{
+  "tasks": [
+    {
+      "topic": "research_topics/LIB_Fluoroether_Anion_Receptor.txt",
+      "status": "completed",
+      "thread_id": "research_research_topics_LIB_Fluoroether_Anion_Receptor.txt_feadbb",
+      "start_time": "2025-11-08T01:21:28.273400",
+      "end_time": "2025-11-08T05:33:29.602850",
+      "checkpoint_file": "cluster_checkpoints/lib-fluoroether-anion-receptor/branch_396f36b0809a53f2/research_research_topics_LIB_Fluoroether_Anion_Receptor.txt_feadbb.sqlite",
+      "final_report_path": null,
+      "error_message": null,
+      "last_event_count": 2,
+      "tot_branches_completed": 0,
+      "tot_current_branch": null,
+      "tot_current_depth": 0,
+      "tot_nodes_explored": 0,
+      "last_node_type": "tot_mode"
+    }
+  ],
+  "current_task_index": 0,
+  "last_save": "2025-11-08T05:41:42.193216",
+  "wall_time_hours": 4.0,
+  "checkpoint_dir": "cluster_checkpoints/lib-fluoroether-anion-receptor/branch_396f36b0809a53f2",
+  "output_dir": "synthesis_branches_and_final/lib-fluoroether-anion-receptor/branch_396f36b0809a53f2"
+}

@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 2.0405555555555556e-06,
+  "reports_generated": [
+    "synthesis_branches_and_final/nutrient-sensors-anti-interference/branch_53e53a1001dff8ff/research_topics_Nutrient_Sensors_Anti_Interference.txt/final_report_20251108_112625.md"
+  ],
+  "can_resume": false
+}

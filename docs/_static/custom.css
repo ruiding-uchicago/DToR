@@ -1,0 +1,18 @@
+/* Match Hydrocron's clean aesthetic */
+:root {
+  --pst-color-primary: #2E86AB;
+  --pst-color-link: #2E86AB;
+  --pst-color-link-hover: #1a5d7a;
+}
+
+/* Clean typography */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* Professional header spacing */
+.bd-header {
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}

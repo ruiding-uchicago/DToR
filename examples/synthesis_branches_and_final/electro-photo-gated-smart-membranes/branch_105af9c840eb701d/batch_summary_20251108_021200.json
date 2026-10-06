@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 3.775848389444444,
+  "reports_generated": [
+    "synthesis_branches_and_final/electro-photo-gated-smart-membranes/branch_105af9c840eb701d/research_topics_Electro_Photo_Gated_Smart_Membranes.txt/final_report_20251108_021200.md"
+  ],
+  "can_resume": false
+}

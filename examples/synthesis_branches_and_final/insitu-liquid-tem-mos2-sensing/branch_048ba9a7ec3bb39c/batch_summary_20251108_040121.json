@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 0.41639877444444445,
+  "reports_generated": [
+    "synthesis_branches_and_final/insitu-liquid-tem-mos2-sensing/branch_048ba9a7ec3bb39c/research_topics_InSitu_Liquid_TEM_MoS2_Sensing.txt/final_report_20251108_040121.md"
+  ],
+  "can_resume": false
+}

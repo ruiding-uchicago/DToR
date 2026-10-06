@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 1.5191666666666666e-06,
+  "reports_generated": [
+    "synthesis_branches_and_final/microplastics-sensing-2d/branch_fe0c004cb119d39a/research_topics_Microplastics_Sensing_2D.txt/final_report_20251108_062941.md"
+  ],
+  "can_resume": false
+}

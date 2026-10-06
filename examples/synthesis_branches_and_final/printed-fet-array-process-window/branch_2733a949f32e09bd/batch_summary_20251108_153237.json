@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 1.5594444444444445e-06,
+  "reports_generated": [
+    "synthesis_branches_and_final/printed-fet-array-process-window/branch_2733a949f32e09bd/research_topics_Printed_FET_Array_Process_Window.txt/final_report_20251108_152859.md"
+  ],
+  "can_resume": false
+}

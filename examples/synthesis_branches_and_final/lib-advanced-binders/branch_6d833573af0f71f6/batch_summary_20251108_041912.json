@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 0.023176862500000003,
+  "reports_generated": [
+    "synthesis_branches_and_final/lib-advanced-binders/branch_6d833573af0f71f6/research_topics_LIB_Advanced_Binders.txt/final_report_20251108_041912.md"
+  ],
+  "can_resume": false
+}

@@ -1,0 +1,115 @@
+services:
+  # Chainlit UI service
+  chainlit:
+    build:
+      context: .
+      dockerfile: Dockerfile-ui
+    image: dtor-chainlit:latest
+    container_name: dtor-chainlit
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount checkpoint directory to persist state
+      - ./checkpoints:/app/checkpoints
+      # Mount output directory to save reports
+      - ./output:/app/output
+      # Mount logs directory
+      - ./logs:/app/logs
+      # Optional: mount research topics if you have them
+      - ./research_topics:/app/research_topics:ro
+      # Vector stores for RAG (need write access for ChromaDB)
+      - /Users/ruiding/mac_python_folder/langchain_agent/vector_store_100_merged:/app/vector_store
+      - /Users/ruiding/mac_python_folder/code_vectorstore:/app/code_vectorstore
+      - /Users/ruiding/mac_python_folder/MADE_PUBLIC_REPO_snapshot2025/excel_raw_data_vectorization/excel_vectorstore:/app/excel_vectorstore
+      - /Users/ruiding/mac_python_folder/MADE_PUBLIC_REPO_snapshot2025/non_excel_vectorstore:/app/non_excel_vectorstore
+    environment:
+      # Chainlit configuration
+      - CHAINLIT_HOST=0.0.0.0
+      - CHAINLIT_PORT=8000
+
+      # LLM Configuration
+      - USE_LOCAL_RAG=${USE_LOCAL_RAG:-false}
+      - LOCAL_LLM_TIMEOUT_SECONDS=${LOCAL_LLM_TIMEOUT_SECONDS:-300}
+      - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
+      - LOCAL_LLM=${LOCAL_LLM:-gpt-oss:20b}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+      - LMSTUDIO_BASE_URL=${LMSTUDIO_BASE_URL:-http://host.docker.internal:1234/v1}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-5-nano}
+
+      # Phoenix Configuration
+      - PHOENIX_ENABLED=${PHOENIX_ENABLED:-true}
+      - PHOENIX_HOST=localhost
+      - PHOENIX_PORT=6006
+      - PHOENIX_PROJECT_NAME=${PHOENIX_PROJECT_NAME:-deep-research}
+      - PHOENIX_ENDPOINT=http://phoenix:6006/v1/traces
+
+      # Search API Configuration
+      - SEARCH_API=${SEARCH_API:-duckduckgo}
+      - TAVILY_API_KEY=${TAVILY_API_KEY:-}
+      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY:-}
+      - SEARXNG_URL=${SEARXNG_URL:-http://localhost:8888}
+
+      # Research Configuration
+      - RESEARCH_MODE=${RESEARCH_MODE:-single}
+      - MAX_WEB_RESEARCH_LOOPS=${MAX_WEB_RESEARCH_LOOPS:-3}
+      - STRIP_THINKING_TOKENS=${STRIP_THINKING_TOKENS:-True}
+      - FETCH_FULL_PAGE=${FETCH_FULL_PAGE:-True}
+
+      # DToR Configuration
+      - MAX_BRANCHES=${MAX_BRANCHES:-3}
+      - MAX_BRANCH_DEPTH=${MAX_BRANCH_DEPTH:-3}
+      - NODES_PER_BRANCH=${NODES_PER_BRANCH:-100}
+
+      # RAG Configuration
+      - ENABLE_FET_RAW_DATA=${ENABLE_FET_RAW_DATA:-false}
+      - ENABLE_CODE_RETRIEVAL=${ENABLE_CODE_RETRIEVAL:-false}
+      - ENABLE_PAPER_RETRIEVAL=${ENABLE_PAPER_RETRIEVAL:-false}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-BAAI/bge-m3}
+      # Use container paths (not host paths from .env)
+      - PAPER_VECTOR_PATH=/app/vector_store
+      - PAPER_RESULTS_COUNT=${PAPER_RESULTS_COUNT:-5}
+      - CODE_VECTOR_PATH=/app/code_vectorstore
+      - CODE_RESULTS_COUNT=${CODE_RESULTS_COUNT:-10}
+      - FET_EXCEL_PATH=/app/excel_vectorstore
+      - LOCAL_UNSTRUCTURED_DOCS_PATH=/app/non_excel_vectorstore
+      - FET_K_FOLDERS=${FET_K_FOLDERS:-8}
+      - FET_K_RUNS_PER_FOLDER=${FET_K_RUNS_PER_FOLDER:-4}
+      - FET_K_NON_EXCEL=${FET_K_NON_EXCEL:-3}
+    # If you need to connect to Ollama running on the host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      phoenix:
+        condition: service_healthy
+    command: chainlit run src/ollama_deep_researcher/chainlit_app.py --host 0.0.0.0 --port 8000
+    networks:
+      - dtor-network
+
+  # Phoenix observability service
+  phoenix:
+    build:
+      context: .
+      dockerfile: Dockerfile-ui
+    image: dtor-chainlit:latest
+    container_name: dtor-phoenix
+    ports:
+      - "6006:6006"  # Phoenix UI
+      - "4317:4317"  # OpenTelemetry gRPC receiver
+      - "4318:4318"  # OpenTelemetry HTTP receiver
+    environment:
+      - PHOENIX_PORT=6006
+      - PHOENIX_HOST=0.0.0.0
+    command: phoenix serve
+    networks:
+      - dtor-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6006"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+networks:
+  dtor-network:
+    driver: bridge

@@ -1,0 +1,19 @@
+{
+  "topic": "What material or membrane exhibits the highest selectivity for Li\u207a over Na\u207a in aqueous systems, given their nearly identical hydrated ionic radii and solvation environments? Beyond crown-ether\u2013functionalized polymers, what novel or unexpected materials\u2014such as bioinspired ultrahigh-selectivity membranes or covalent organic framework nanochannels\u2014might provide breakthrough Li\u207a discrimination over Na\u207a? Find novel and promising candidates.",
+  "perspectives": [
+    {
+      "id": "8ecea3b7a381fe21",
+      "perspective": "Bioinspired Peptide\u2011Based Nanochannels Mimicking Li\u207a\u2011Selective Transporters"
+    },
+    {
+      "id": "a09ff28f76de4d25",
+      "perspective": "Covalent\u2011Organic Framework (COF) Nanochannels with Tunable Lewis\u2011Acidic Sites"
+    },
+    {
+      "id": "e72000f06c713ada",
+      "perspective": "Defect\u2011Engineered 2D Materials (e.g., Graphene Oxide, MoS\u2082) with Sub\u2011nanometer Charged Nanopores"
+    }
+  ],
+  "timestamp": "2025-11-07T13:16:37.811376",
+  "thread_id": "research_6b8867"
+}

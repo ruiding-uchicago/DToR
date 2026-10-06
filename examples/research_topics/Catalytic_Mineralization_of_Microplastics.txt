@@ -1,0 +1,1 @@
+Which ROS-generating photocatalysts and micromotor architectures achieve verifiable depolymerization/mineralization of common MPs (PE, PP, PET) in real waters—what mineralization fractions, spectra, and by-product toxicology benchmarks define "true cleanup"?

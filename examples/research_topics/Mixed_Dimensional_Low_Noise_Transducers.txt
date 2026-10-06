@@ -1,0 +1,1 @@
+Which 2D-0D/2D-1D/2D-3D vdW stacks (e.g., MoS₂–QD, CNT–graphene) best combine strong capture/absorption with high-mobility transport to push FET/photodetector responsivity and baseline stability in real media?

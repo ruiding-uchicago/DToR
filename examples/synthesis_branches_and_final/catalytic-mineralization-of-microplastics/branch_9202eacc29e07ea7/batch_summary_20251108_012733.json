@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 1.7744444444444443e-06,
+  "reports_generated": [
+    "synthesis_branches_and_final/catalytic-mineralization-of-microplastics/branch_9202eacc29e07ea7/research_topics_Catalytic_Mineralization_of_Microplastics.txt/final_report_20251108_005721.md"
+  ],
+  "can_resume": false
+}

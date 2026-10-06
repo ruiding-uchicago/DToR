@@ -1,0 +1,82 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+version: 1
+project:
+  id: 81f64e06-2461-4833-9767-b94a08a61850
+  title: Local Deep Researcher Documentation
+  description: A LangGraph-based research assistant that performs iterative web research and optional local retrieval, running entirely on user-controlled infrastructure.
+  keywords:
+    - LangGraph
+    - Research Assistant
+    - LLM
+    - Ollama
+    - Deep Tree of Research
+    - DToR
+  authors:
+    - name: Local Deep Researcher Contributors
+  github: https://github.com/ruiding-uchicago/DToR_deep_research
+  # To autogenerate a Table of Contents, run "jupyter book init --write-toc"
+  toc:
+    - file: index.md
+      title: Home
+    - title: Getting Started
+      children:
+        - file: index.md
+          sections:
+            - file: index.md
+              title: What is Local Deep Researcher?
+            - file: index.md
+              title: Installation
+            - file: index.md
+              title: Quick Start
+    - title: Documentation
+      children:
+        - file: SYSTEM_OVERVIEW.md
+          title: System Overview
+        - file: RESEARCH_WORKFLOWS.md
+          title: Research Workflows
+        - file: MODALITY_RAG.md
+          title: Modality RAG
+        - file: CHAINLIT_WORKFLOWS.md
+          title: Web UI - Chainlit Workflows
+    - title: Resources
+      children:
+        - file: dependency_list.md
+          title: Dependency List
+        - title: FET Handbook
+          children:
+            - file: FET_handbook/00_Primer_Units_Acronyms_Naming.md
+              title: Primer - Units & Naming
+            - file: FET_handbook/00-02_Primer_Architectures_Materials.md
+              title: Architectures & Materials
+            - file: FET_handbook/03A-04_Fabrication_and_Process_Windows.md
+              title: Fabrication & Process Windows
+            - file: FET_handbook/05-07_Testing_SurfaceChem_QA.md
+              title: Testing & QA
+            - file: FET_handbook/08-09_Handheld_and_Core_Appendices.md
+              title: Handheld & Appendices
+            - file: FET_handbook/A_Rapti_Data_SOP_Map.md
+              title: Rapti Data SOP Map
+site:
+  template: book-theme
+  options:
+    favicon: dtor_logo.png
+    logo: dtor_logo.png
+    logo_text: Local Deep Researcher
+    navbar:
+      - title: Getting Started
+        url: /intro
+      - title: Documentation
+        url: /docs
+      - title: Resources
+        url: /resources
+    footer:
+      copyright: "© Copyright 2025 Local Deep Researcher Contributors"
+    theme:
+      primary: "#2E86AB"  # Professional blue (similar to Hydrocron)
+      accent: "#A23E72"  # Accent color
+    breadcrumbs: true
+    search: true
+    edit_page:
+      repository: https://github.com/ruiding-uchicago/DToR_deep_research
+      branch: main
+      path: docs

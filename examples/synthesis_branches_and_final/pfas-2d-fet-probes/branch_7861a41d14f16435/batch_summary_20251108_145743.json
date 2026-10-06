@@ -1,0 +1,12 @@
+{
+  "total_tasks": 1,
+  "completed": 1,
+  "interrupted": 0,
+  "failed": 0,
+  "pending": 0,
+  "runtime_hours": 0.5279108991666667,
+  "reports_generated": [
+    "synthesis_branches_and_final/pfas-2d-fet-probes/branch_7861a41d14f16435/research_topics_PFAS_2D_FET_Probes.txt/final_report_20251108_145743.md"
+  ],
+  "can_resume": false
+}
