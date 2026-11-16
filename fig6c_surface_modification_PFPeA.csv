@@ -1,0 +1,362 @@
+sensing_layer,device,time_s,dV_GS_mV
+AgNPs/MXene,1,2.991,0.0
+AgNPs/MXene,1,11.965,0.0
+AgNPs/MXene,1,20.939,0.0
+AgNPs/MXene,1,29.913,0.0
+AgNPs/MXene,1,38.887,0.0
+AgNPs/MXene,1,47.862,0.0
+AgNPs/MXene,1,56.836,0.0
+AgNPs/MXene,1,65.929,10.0
+AgNPs/MXene,1,74.959,0.0
+AgNPs/MXene,1,83.933,0.0
+AgNPs/MXene,1,92.907,0.0
+AgNPs/MXene,1,101.881,0.0
+AgNPs/MXene,1,110.855,0.0
+AgNPs/MXene,1,119.83,0.0
+AgNPs/MXene,1,128.803,0.0
+AgNPs/MXene,1,137.778,0.0
+AgNPs/MXene,1,146.753,0.0
+AgNPs/MXene,1,155.727,0.0
+AgNPs/MXene,1,164.694,0.0
+AgNPs/MXene,1,173.662,0.0
+AgNPs/MXene,1,182.623,0.0
+AgNPs/MXene,1,191.598,0.0
+AgNPs/MXene,1,200.572,0.0
+AgNPs/MXene,1,209.594,10.0
+AgNPs/MXene,1,218.742,10.0
+AgNPs/MXene,1,227.903,10.0
+AgNPs/MXene,1,237.158,20.0
+AgNPs/MXene,1,246.754,40.0
+AgNPs/MXene,1,256.474,40.0
+AgNPs/MXene,1,266.195,40.0
+AgNPs/MXene,1,275.915,40.0
+AgNPs/MXene,1,285.635,40.0
+AgNPs/MXene,1,295.356,40.0
+AgNPs/MXene,1,305.062,40.0
+AgNPs/MXene,1,314.7,30.0
+AgNPs/MXene,1,324.234,30.0
+AgNPs/MXene,1,333.768,30.0
+AgNPs/MXene,1,343.302,30.0
+AgNPs/MXene,1,352.836,30.0
+AgNPs/MXene,1,362.37,30.0
+Fluorosilane/AgNPs/MXene,1,3.022,0.0
+Fluorosilane/AgNPs/MXene,1,12.063,0.0
+Fluorosilane/AgNPs/MXene,1,21.089,0.0
+Fluorosilane/AgNPs/MXene,1,30.062,0.0
+Fluorosilane/AgNPs/MXene,1,39.08,0.0
+Fluorosilane/AgNPs/MXene,1,48.098,0.0
+Fluorosilane/AgNPs/MXene,1,57.11,0.0
+Fluorosilane/AgNPs/MXene,1,66.152,0.0
+Fluorosilane/AgNPs/MXene,1,75.177,0.0
+Fluorosilane/AgNPs/MXene,1,84.203,0.0
+Fluorosilane/AgNPs/MXene,1,93.215,0.0
+Fluorosilane/AgNPs/MXene,1,102.219,0.0
+Fluorosilane/AgNPs/MXene,1,111.24,0.0
+Fluorosilane/AgNPs/MXene,1,120.296,0.0
+Fluorosilane/AgNPs/MXene,1,129.238,0.0
+Fluorosilane/AgNPs/MXene,1,138.212,0.0
+Fluorosilane/AgNPs/MXene,1,147.186,0.0
+Fluorosilane/AgNPs/MXene,1,156.161,0.0
+Fluorosilane/AgNPs/MXene,1,165.135,0.0
+Fluorosilane/AgNPs/MXene,1,174.109,0.0
+Fluorosilane/AgNPs/MXene,1,183.084,0.0
+Fluorosilane/AgNPs/MXene,1,192.058,0.0
+Fluorosilane/AgNPs/MXene,1,201.032,0.0
+Fluorosilane/AgNPs/MXene,1,210.006,0.0
+Fluorosilane/AgNPs/MXene,1,218.981,0.0
+Fluorosilane/AgNPs/MXene,1,227.955,0.0
+Fluorosilane/AgNPs/MXene,1,236.929,0.0
+Fluorosilane/AgNPs/MXene,1,245.839,-10.0
+Fluorosilane/AgNPs/MXene,1,254.716,-10.0
+Fluorosilane/AgNPs/MXene,1,263.57,-10.0
+Fluorosilane/AgNPs/MXene,1,272.424,-10.0
+Fluorosilane/AgNPs/MXene,1,281.278,-10.0
+Fluorosilane/AgNPs/MXene,1,290.131,-10.0
+Fluorosilane/AgNPs/MXene,1,298.984,-10.0
+Fluorosilane/AgNPs/MXene,1,307.838,-10.0
+Fluorosilane/AgNPs/MXene,1,316.692,-10.0
+Fluorosilane/AgNPs/MXene,1,325.546,-10.0
+Fluorosilane/AgNPs/MXene,1,334.4,-10.0
+Fluorosilane/AgNPs/MXene,1,343.253,-10.0
+Fluorosilane/AgNPs/MXene,1,352.106,-10.0
+Fluoroamine/MXene (no Ag),1,3.288,20.0
+Fluoroamine/MXene (no Ag),1,13.161,20.0
+Fluoroamine/MXene (no Ag),1,23.048,20.0
+Fluoroamine/MXene (no Ag),1,32.901,10.0
+Fluoroamine/MXene (no Ag),1,42.665,10.0
+Fluoroamine/MXene (no Ag),1,52.406,10.0
+Fluoroamine/MXene (no Ag),1,62.125,10.0
+Fluoroamine/MXene (no Ag),1,71.844,10.0
+Fluoroamine/MXene (no Ag),1,81.563,10.0
+Fluoroamine/MXene (no Ag),1,91.27,10.0
+Fluoroamine/MXene (no Ag),1,100.945,0.0
+Fluoroamine/MXene (no Ag),1,110.523,0.0
+Fluoroamine/MXene (no Ag),1,120.079,0.0
+Fluoroamine/MXene (no Ag),1,129.613,0.0
+Fluoroamine/MXene (no Ag),1,138.961,-10.0
+Fluoroamine/MXene (no Ag),1,148.309,-10.0
+Fluoroamine/MXene (no Ag),1,157.657,-10.0
+Fluoroamine/MXene (no Ag),1,166.999,-10.0
+Fluoroamine/MXene (no Ag),1,176.412,-10.0
+Fluoroamine/MXene (no Ag),1,185.837,0.0
+Fluoroamine/MXene (no Ag),1,195.351,0.0
+Fluoroamine/MXene (no Ag),1,204.865,0.0
+Fluoroamine/MXene (no Ag),1,214.378,0.0
+Fluoroamine/MXene (no Ag),1,223.904,0.0
+Fluoroamine/MXene (no Ag),1,233.438,0.0
+Fluoroamine/MXene (no Ag),1,242.972,0.0
+Fluoroamine/MXene (no Ag),1,252.506,0.0
+Fluoroamine/MXene (no Ag),1,258.862,0.0
+Fluoroamine/MXene (no Ag),1,268.396,0.0
+Fluoroamine/MXene (no Ag),1,277.93,0.0
+Fluoroamine/MXene (no Ag),1,287.463,0.0
+Fluoroamine/MXene (no Ag),1,296.996,0.0
+Fluoroamine/MXene (no Ag),1,306.528,0.0
+Fluoroamine/MXene (no Ag),1,316.062,0.0
+Fluoroamine/MXene (no Ag),1,325.639,0.0
+Fluoroamine/MXene (no Ag),1,335.217,0.0
+Fluoroamine/MXene (no Ag),1,344.817,0.0
+Fluoroamine/MXene (no Ag),1,354.502,10.0
+Fluoroamine/MXene (no Ag),1,364.203,10.0
+Fluoroamine/MXene (no Ag),1,373.91,10.0
+Fluoroamine/MXene (no Ag),1,383.63,10.0
+Fluoroamine/MXene (no Ag),1,393.331,10.0
+Fluoroamine/MXene (no Ag),1,403.038,10.0
+Fluoroamine/MXene (no Ag),1,412.751,10.0
+Fluoroamine/MXene (no Ag),1,422.47,10.0
+Fluoroamine/MXene (no Ag),1,432.189,10.0
+Fluoroamine/MXene (no Ag),1,441.908,10.0
+Fluoroamine/MXene (no Ag),1,451.628,10.0
+Fluoroamine/MXene (no Ag),1,461.371,10.0
+Fluoroamine/MXene (no Ag),1,471.135,10.0
+Fluoroamine/MXene (no Ag),1,480.899,10.0
+Fluoroamine/MXene (no Ag),1,490.727,20.0
+Fluoroamine/MXene (no Ag),1,500.606,20.0
+Fluoroamine/MXene (no Ag),1,510.493,20.0
+Fluoroamine/MXene (no Ag),1,520.269,10.0
+Fluoroamine/MXene (no Ag),1,529.989,10.0
+Fluoroamine/MXene (no Ag),1,539.71,10.0
+Fluoroamine/MXene (no Ag),1,549.43,10.0
+Fluoroamine/MXene (no Ag),1,559.15,10.0
+Fluoroamine/MXene (no Ag),1,568.892,10.0
+Fluoroamine/MXene (no Ag),1,578.656,10.0
+Fluoroamine/MXene (no Ag),1,588.441,10.0
+Fluoroamine/MXene (no Ag),1,598.285,20.0
+Fluoroamine/MXene (no Ag),1,608.171,20.0
+Fluoroamine/MXene (no Ag),1,618.057,20.0
+Fluoroamine/MXene (no Ag),1,627.951,20.0
+Fluoroamine/MXene (no Ag),1,637.858,20.0
+Fluoroamine/AgNPs/MXene,1,4.269,10.0
+Fluoroamine/AgNPs/MXene,1,17.024,0.0
+Fluoroamine/AgNPs/MXene,1,29.754,0.0
+Fluoroamine/AgNPs/MXene,1,42.483,0.0
+Fluoroamine/AgNPs/MXene,1,55.147,0.0
+Fluoroamine/AgNPs/MXene,1,67.793,0.0
+Fluoroamine/AgNPs/MXene,1,80.418,0.0
+Fluoroamine/AgNPs/MXene,1,93.037,0.0
+Fluoroamine/AgNPs/MXene,1,105.656,0.0
+Fluoroamine/AgNPs/MXene,1,118.29,0.0
+Fluoroamine/AgNPs/MXene,1,131.02,0.0
+Fluoroamine/AgNPs/MXene,1,143.75,0.0
+Fluoroamine/AgNPs/MXene,1,156.479,0.0
+Fluoroamine/AgNPs/MXene,1,169.209,0.0
+Fluoroamine/AgNPs/MXene,1,181.85,0.0
+Fluoroamine/AgNPs/MXene,1,194.469,0.0
+Fluoroamine/AgNPs/MXene,1,207.089,0.0
+Fluoroamine/AgNPs/MXene,1,219.708,0.0
+Fluoroamine/AgNPs/MXene,1,232.328,0.0
+Fluoroamine/AgNPs/MXene,1,244.946,0.0
+Fluoroamine/AgNPs/MXene,1,257.564,0.0
+Fluoroamine/AgNPs/MXene,1,270.19,0.0
+Fluoroamine/AgNPs/MXene,1,282.832,0.0
+Fluoroamine/AgNPs/MXene,1,295.487,0.0
+Fluoroamine/AgNPs/MXene,1,308.173,0.0
+Fluoroamine/AgNPs/MXene,1,320.88,0.0
+Fluoroamine/AgNPs/MXene,1,333.61,0.0
+Fluoroamine/AgNPs/MXene,1,346.273,0.0
+Fluoroamine/AgNPs/MXene,1,358.892,0.0
+Fluoroamine/AgNPs/MXene,1,371.512,0.0
+Fluoroamine/AgNPs/MXene,1,384.132,0.0
+Fluoroamine/AgNPs/MXene,1,396.751,0.0
+Fluoroamine/AgNPs/MXene,1,409.371,0.0
+Fluoroamine/AgNPs/MXene,1,421.99,0.0
+Fluoroamine/AgNPs/MXene,1,434.609,0.0
+Fluoroamine/AgNPs/MXene,1,447.227,0.0
+Fluoroamine/AgNPs/MXene,1,459.846,0.0
+Fluoroamine/AgNPs/MXene,1,472.488,0.0
+Fluoroamine/AgNPs/MXene,1,485.121,0.0
+Fluoroamine/AgNPs/MXene,1,497.806,0.0
+Fluoroamine/AgNPs/MXene,1,510.638,20.0
+Fluoroamine/AgNPs/MXene,1,523.741,20.0
+Fluoroamine/AgNPs/MXene,1,536.844,20.0
+Fluoroamine/AgNPs/MXene,1,549.947,20.0
+Fluoroamine/AgNPs/MXene,1,563.049,20.0
+Fluoroamine/AgNPs/MXene,1,576.13,20.0
+Fluoroamine/AgNPs/MXene,1,589.21,20.0
+Fluoroamine/AgNPs/MXene,1,602.29,20.0
+Fluoroamine/AgNPs/MXene,1,615.392,20.0
+Fluoroamine/AgNPs/MXene,1,628.472,20.0
+Fluoroamine/AgNPs/MXene,1,641.552,20.0
+Fluoroamine/AgNPs/MXene,1,654.655,20.0
+Fluoroamine/AgNPs/MXene,1,667.736,20.0
+Fluoroamine/AgNPs/MXene,1,680.839,20.0
+Fluoroamine/AgNPs/MXene,1,694.017,30.0
+Fluoroamine/AgNPs/MXene,1,707.195,30.0
+Fluoroamine/AgNPs/MXene,1,720.374,30.0
+Fluoroamine/AgNPs/MXene,1,733.552,30.0
+Fluoroamine/AgNPs/MXene,1,746.731,30.0
+Fluoroamine/AgNPs/MXene,1,759.91,30.0
+Fluoroamine/AgNPs/MXene,1,773.089,30.0
+Fluoroamine/AgNPs/MXene,1,786.268,30.0
+Fluoroamine/AgNPs/MXene,1,799.447,30.0
+Fluoroamine/AgNPs/MXene,1,812.625,30.0
+Fluoroamine/AgNPs/MXene,1,825.803,30.0
+Fluoroamine/AgNPs/MXene,1,838.981,30.0
+Fluoroamine/AgNPs/MXene,1,852.174,30.0
+Fluoroamine/AgNPs/MXene,1,865.411,30.0
+Fluoroamine/AgNPs/MXene,1,878.678,30.0
+Fluoroamine/AgNPs/MXene,1,891.899,30.0
+Fluoroamine/AgNPs/MXene,1,905.143,30.0
+Fluoroamine/AgNPs/MXene,1,918.366,30.0
+Fluoroamine/AgNPs/MXene,1,931.589,30.0
+Fluoroamine/AgNPs/MXene,1,944.811,30.0
+Fluoroamine/AgNPs/MXene,1,958.034,30.0
+Fluoroamine/AgNPs/MXene,1,971.256,30.0
+Fluoroamine/AgNPs/MXene,1,984.472,30.0
+Fluoroamine/AgNPs/MXene,1,997.739,30.0
+Fluoroamine/AgNPs/MXene,1,1010.961,30.0
+Fluoroamine/AgNPs/MXene,1,1024.249,30.0
+Fluoroamine/AgNPs/MXene,2,273.934,-10.0
+Fluoroamine/AgNPs/MXene,2,282.668,-10.0
+Fluoroamine/AgNPs/MXene,2,291.401,-10.0
+Fluoroamine/AgNPs/MXene,2,300.134,-10.0
+Fluoroamine/AgNPs/MXene,2,308.866,-10.0
+Fluoroamine/AgNPs/MXene,2,317.599,-10.0
+Fluoroamine/AgNPs/MXene,2,326.339,-10.0
+Fluoroamine/AgNPs/MXene,2,335.138,0.0
+Fluoroamine/AgNPs/MXene,2,343.97,0.0
+Fluoroamine/AgNPs/MXene,2,352.81,0.0
+Fluoroamine/AgNPs/MXene,2,361.664,0.0
+Fluoroamine/AgNPs/MXene,2,370.518,0.0
+Fluoroamine/AgNPs/MXene,2,379.371,0.0
+Fluoroamine/AgNPs/MXene,2,388.225,0.0
+Fluoroamine/AgNPs/MXene,2,397.079,0.0
+Fluoroamine/AgNPs/MXene,2,405.932,0.0
+Fluoroamine/AgNPs/MXene,2,414.786,0.0
+Fluoroamine/AgNPs/MXene,2,423.639,0.0
+Fluoroamine/AgNPs/MXene,2,432.493,0.0
+Fluoroamine/AgNPs/MXene,2,441.347,0.0
+Fluoroamine/AgNPs/MXene,2,450.201,0.0
+Fluoroamine/AgNPs/MXene,2,459.055,0.0
+Fluoroamine/AgNPs/MXene,2,467.908,0.0
+Fluoroamine/AgNPs/MXene,2,476.761,0.0
+Fluoroamine/AgNPs/MXene,2,485.614,0.0
+Fluoroamine/AgNPs/MXene,2,494.466,0.0
+Fluoroamine/AgNPs/MXene,2,503.319,0.0
+Fluoroamine/AgNPs/MXene,2,509.325,20.0
+Fluoroamine/AgNPs/MXene,2,518.48,20.0
+Fluoroamine/AgNPs/MXene,2,527.621,20.0
+Fluoroamine/AgNPs/MXene,2,536.763,20.0
+Fluoroamine/AgNPs/MXene,2,545.917,20.0
+Fluoroamine/AgNPs/MXene,2,555.077,20.0
+Fluoroamine/AgNPs/MXene,2,564.238,20.0
+Fluoroamine/AgNPs/MXene,2,573.398,20.0
+Fluoroamine/AgNPs/MXene,2,582.56,20.0
+Fluoroamine/AgNPs/MXene,2,591.721,20.0
+Fluoroamine/AgNPs/MXene,2,600.883,20.0
+Fluoroamine/AgNPs/MXene,2,610.066,20.0
+Fluoroamine/AgNPs/MXene,2,619.228,20.0
+Fluoroamine/AgNPs/MXene,2,628.433,20.0
+Fluoroamine/AgNPs/MXene,2,637.78,30.0
+Fluoroamine/AgNPs/MXene,2,647.127,30.0
+Fluoroamine/AgNPs/MXene,2,656.496,30.0
+Fluoroamine/AgNPs/MXene,2,665.887,30.0
+Fluoroamine/AgNPs/MXene,2,675.278,30.0
+Fluoroamine/AgNPs/MXene,2,684.726,40.0
+Fluoroamine/AgNPs/MXene,2,694.24,40.0
+Fluoroamine/AgNPs/MXene,2,703.755,40.0
+Fluoroamine/AgNPs/MXene,2,713.289,40.0
+Fluoroamine/AgNPs/MXene,2,722.823,40.0
+Fluoroamine/AgNPs/MXene,2,732.356,40.0
+Fluoroamine/AgNPs/MXene,2,741.889,40.0
+Fluoroamine/AgNPs/MXene,2,751.444,40.0
+Fluoroamine/AgNPs/MXene,2,761.117,50.0
+Fluoroamine/AgNPs/MXene,2,770.817,50.0
+Fluoroamine/AgNPs/MXene,2,780.518,50.0
+Fluoroamine/AgNPs/MXene,2,790.218,50.0
+Fluoroamine/AgNPs/MXene,2,799.917,50.0
+Fluoroamine/AgNPs/MXene,2,809.616,50.0
+Fluoroamine/AgNPs/MXene,2,819.316,50.0
+Fluoroamine/AgNPs/MXene,2,829.017,50.0
+Fluoroamine/AgNPs/MXene,2,838.731,50.0
+Fluoroamine/AgNPs/MXene,2,848.451,50.0
+Fluoroamine/AgNPs/MXene,2,858.172,50.0
+Fluoroamine/AgNPs/MXene,2,867.892,50.0
+Fluoroamine/AgNPs/MXene,2,877.612,50.0
+Fluoroamine/AgNPs/MXene,3,259.76,10.0
+Fluoroamine/AgNPs/MXene,3,269.286,10.0
+Fluoroamine/AgNPs/MXene,3,278.819,10.0
+Fluoroamine/AgNPs/MXene,3,288.352,10.0
+Fluoroamine/AgNPs/MXene,3,297.867,10.0
+Fluoroamine/AgNPs/MXene,3,307.374,10.0
+Fluoroamine/AgNPs/MXene,3,316.781,0.0
+Fluoroamine/AgNPs/MXene,3,326.195,0.0
+Fluoroamine/AgNPs/MXene,3,335.586,0.0
+Fluoroamine/AgNPs/MXene,3,344.934,0.0
+Fluoroamine/AgNPs/MXene,3,354.282,0.0
+Fluoroamine/AgNPs/MXene,3,363.629,0.0
+Fluoroamine/AgNPs/MXene,3,372.975,0.0
+Fluoroamine/AgNPs/MXene,3,382.322,0.0
+Fluoroamine/AgNPs/MXene,3,391.67,0.0
+Fluoroamine/AgNPs/MXene,3,401.017,0.0
+Fluoroamine/AgNPs/MXene,3,410.365,0.0
+Fluoroamine/AgNPs/MXene,3,419.712,0.0
+Fluoroamine/AgNPs/MXene,3,429.058,0.0
+Fluoroamine/AgNPs/MXene,3,438.405,0.0
+Fluoroamine/AgNPs/MXene,3,447.739,0.0
+Fluoroamine/AgNPs/MXene,3,457.041,-10.0
+Fluoroamine/AgNPs/MXene,3,466.284,-10.0
+Fluoroamine/AgNPs/MXene,3,475.511,-10.0
+Fluoroamine/AgNPs/MXene,3,484.747,-10.0
+Fluoroamine/AgNPs/MXene,3,493.952,-10.0
+Fluoroamine/AgNPs/MXene,3,503.195,-10.0
+Fluoroamine/AgNPs/MXene,3,509.442,10.0
+Fluoroamine/AgNPs/MXene,3,518.956,10.0
+Fluoroamine/AgNPs/MXene,3,528.469,10.0
+Fluoroamine/AgNPs/MXene,3,537.989,10.0
+Fluoroamine/AgNPs/MXene,3,547.521,10.0
+Fluoroamine/AgNPs/MXene,3,557.055,10.0
+Fluoroamine/AgNPs/MXene,3,566.59,10.0
+Fluoroamine/AgNPs/MXene,3,576.124,10.0
+Fluoroamine/AgNPs/MXene,3,585.68,10.0
+Fluoroamine/AgNPs/MXene,3,595.279,10.0
+Fluoroamine/AgNPs/MXene,3,604.903,10.0
+Fluoroamine/AgNPs/MXene,3,614.577,20.0
+Fluoroamine/AgNPs/MXene,3,624.284,20.0
+Fluoroamine/AgNPs/MXene,3,633.996,20.0
+Fluoroamine/AgNPs/MXene,3,643.716,20.0
+Fluoroamine/AgNPs/MXene,3,653.437,20.0
+Fluoroamine/AgNPs/MXene,3,663.157,20.0
+Fluoroamine/AgNPs/MXene,3,672.878,20.0
+Fluoroamine/AgNPs/MXene,3,682.598,20.0
+Fluoroamine/AgNPs/MXene,3,692.34,20.0
+Fluoroamine/AgNPs/MXene,3,702.082,20.0
+Fluoroamine/AgNPs/MXene,3,711.876,20.0
+Fluoroamine/AgNPs/MXene,3,721.71,30.0
+Fluoroamine/AgNPs/MXene,3,731.602,30.0
+Fluoroamine/AgNPs/MXene,3,741.508,30.0
+Fluoroamine/AgNPs/MXene,3,751.415,30.0
+Fluoroamine/AgNPs/MXene,3,761.321,30.0
+Fluoroamine/AgNPs/MXene,3,771.279,30.0
+Fluoroamine/AgNPs/MXene,3,781.25,30.0
+Fluoroamine/AgNPs/MXene,3,791.178,30.0
+Fluoroamine/AgNPs/MXene,3,801.106,30.0
+Fluoroamine/AgNPs/MXene,3,811.013,30.0
+Fluoroamine/AgNPs/MXene,3,820.92,30.0
+Fluoroamine/AgNPs/MXene,3,830.827,30.0
+Fluoroamine/AgNPs/MXene,3,840.755,30.0
+Fluoroamine/AgNPs/MXene,3,850.706,30.0
+Fluoroamine/AgNPs/MXene,3,860.656,30.0
+Fluoroamine/AgNPs/MXene,3,870.629,30.0
+Fluoroamine/AgNPs/MXene,3,880.702,40.0
+Fluoroamine/AgNPs/MXene,3,890.793,40.0

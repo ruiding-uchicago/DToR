@@ -1,0 +1,13 @@
+sensing_layer,analyte,dV_over_V0_mean_percent,dV_over_V0_sd_percent,onset_mean_s,onset_sd_s
+MXene,PFOS,-0.065,,,
+MXene,PFOA,0.0,,,
+MXene,PFHxS,0.0,,,
+MXene,PFPeA,1.467,,89.38,
+AgNPs/MXene,PFPeA,1.974,,29.96,
+Fluorosilane/AgNPs/MXene,PFPeA,-0.658,,62.79,
+Fluoroamine/MXene (no Ag),PFPeA,1.29,,92.36,
+Fluoroamine/AgNPs/MXene,PFPeA,2.728,0.865,3.53,0.73
+Fluoroamine/AgNPs/MXene,PFOS,0.847,0.734,4.03,0.21
+Fluoroamine/AgNPs/MXene,PFOA,1.074,0.368,9.79,10.19
+Fluoroamine/AgNPs/MXene,PFHxS,0.651,1.108,5.16,1.98
+Fluoroamine/AgNPs/MXene,PFOA+PFPeA,1.491,0.375,5.25,2.22
